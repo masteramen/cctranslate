@@ -14,6 +14,8 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
+import org.ligboy.translate.Translate;
+import org.ligboy.translate.model.TranslateResult;
 import org.mihalis.opal.notify.Notifier;
 
 public class GlobalKeyListenerExample implements NativeKeyListener {
@@ -132,5 +134,15 @@ public class GlobalKeyListenerExample implements NativeKeyListener {
 			}
 		}
 		display.dispose();
+	}
+	
+	public String translate(String raw) {
+	    final Translate translate = new Translate.Builder()
+	            .logLevel(Translate.LogLevel.BODY)
+	            .build();
+	    
+	        translate.refreshTokenKey();
+	        TranslateResult result = translate.translate(raw,Translate.SOURCE_LANG_AUTO, 'zh_CN');
+	        
 	}
 }
