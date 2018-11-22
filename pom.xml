@@ -56,14 +56,23 @@
 			<version>1.0.0</version>
 
 		</dependency>
+				<dependency>
+			<groupId>org.ligboy.library</groupId>
+			<artifactId>google-translate</artifactId>
+			<version>1.0.0</version>
 
+		</dependency>
 
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.eclipse.swt</groupId>
 			<artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
 			<version>4.3</version>
-		</dependency>
-
+		</dependency> -->
+<dependency>
+    <groupId>fr.jcgay.send-notification</groupId>
+    <artifactId>send-notification</artifactId>
+    <version>0.15.0</version>
+</dependency>
 		<dependency>
 			<groupId>com.1stleg</groupId>
 			<artifactId>jnativehook</artifactId>

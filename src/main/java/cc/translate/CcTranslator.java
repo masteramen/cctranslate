@@ -1,28 +1,54 @@
+package cc.translate;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Tray;
-import org.eclipse.swt.widgets.TrayItem;
+
+import java.awt.AWTException;
+import java.awt.CheckboxMenuItem;
+import java.awt.Image;
+import java.awt.Menu;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.ligboy.translate.Translate;
+import org.ligboy.translate.exception.IllegalTokenKeyException;
+import org.ligboy.translate.exception.RetrieveTokenKeyFailedException;
+import org.ligboy.translate.exception.TranslateFailedException;
 import org.ligboy.translate.model.TranslateResult;
-import org.mihalis.opal.notify.Notifier;
 
-public class GlobalKeyListenerExample implements NativeKeyListener {
+public class CcTranslator implements NativeKeyListener {
+	private boolean ctrlKeyDown = false;
+	private int cCount = 0;
 	public void nativeKeyPressed(NativeKeyEvent e) {
-		System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
-
-		if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
+		//System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
+		if(e.getKeyCode()==NativeKeyEvent.VC_CONTROL){
+			this.ctrlKeyDown = true;
+		}else if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
 			try {
 				GlobalScreen.unregisterNativeHook();
 			} catch (NativeHookException e1) {
@@ -32,87 +58,61 @@ public class GlobalKeyListenerExample implements NativeKeyListener {
 	}
 
 	public void nativeKeyReleased(NativeKeyEvent e) {
-		System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
-		Display.getDefault().asyncExec(new Runnable() {
-			 public void run() {
-					Notifier.notify("New Mail message", "<b>Link </b>Hello, for what \nI understand your problem \nwas basically in the command \n string you sent to jPowershell and\n not in the JAR itself.");
-			 }
-			});
+		
+		if(e.getKeyCode()==NativeKeyEvent.VC_CONTROL){
+			this.ctrlKeyDown = false;
+		} 
+		if(ctrlKeyDown && "C".equals(NativeKeyEvent.getKeyText(e.getKeyCode()))){
+			this.cCount  +=1;
+			
+		}
+		if(this.cCount>=2){
+			this.cCount = 0;
+			//System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				 public void run() {
+						try {
+							Notify.notify(translate(Notify.getgetSystemClipboardData()));
+						} catch (RetrieveTokenKeyFailedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (TranslateFailedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalTokenKeyException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (URISyntaxException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				 }
+				});
+		}
+
 	}
 
 	public void nativeKeyTyped(NativeKeyEvent e) {
-		System.out.println("Key Typed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
+		//System.out.println("Key Typed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
 	}
 
 	public static void main(String[] args) {
 		
-		final Display display = new Display();
-		final Shell shell = new Shell(display,SWT.NO_TRIM);
-		shell.setText("Notifier Snippet");
-		shell.setSize(0, 0);
-		shell.setVisible(false);
-        Image image = new Image(display, 16, 16);
-        final Tray tray = display.getSystemTray();
-        if (tray == null) {
-            System.out.println("The system tray is not available");
-        } else {
-            final TrayItem item = new TrayItem(tray, SWT.NONE);
-            item.setToolTipText("SWT TrayItem");
-            item.addListener(SWT.Show, new Listener() {
-                public void handleEvent(Event event) {
-                    System.out.println("show");
-                }
-            });
-            item.addListener(SWT.Hide, new Listener() {
-                public void handleEvent(Event event) {
-                    System.out.println("hide");
-                }
-            });
-            item.addListener(SWT.Selection, new Listener() {
-                public void handleEvent(Event event) {
-                    System.out.println("selection");
-                }
-            });
-            item.addListener(SWT.DefaultSelection, new Listener() {
-                public void handleEvent(Event event) {
-                    System.out.println("default selection");
-                    // show main
-                    Shell s = event.display.getShells()[0];
-                    s.setVisible( !s.getVisible());
-                    s.setMinimized(!s.getVisible());
-                }
-            });
-            final Menu menu = new Menu(shell, SWT.POP_UP);
-            for (int i = 0; i < 8; i++) {
-                MenuItem mi = new MenuItem(menu, SWT.PUSH);
-                mi.setText("Item" + i);
-            }
-            item.addListener(SWT.MenuDetect, new Listener() {
-                public void handleEvent(Event event) {
-                    menu.setVisible(true);
-                }
-            });
-            item.setImage(image);
-        }
-        shell.addShellListener(new ShellListener() {
-            public void shellDeactivated(org.eclipse.swt.events.ShellEvent e) {
-            }
-
-            public void shellActivated(org.eclipse.swt.events.ShellEvent e) {
-            }
-
-            public void shellClosed(org.eclipse.swt.events.ShellEvent e) {
-            }
-
-            public void shellDeiconified(org.eclipse.swt.events.ShellEvent e) {
-            }
-
-            public void shellIconified(org.eclipse.swt.events.ShellEvent e) {
-  
-                ((Shell) e.getSource()).setVisible(false);
+        /* Turn off metal's use of bold fonts */
+        UIManager.put("swing.boldMetal", Boolean.FALSE);
+        //Schedule a job for the event-dispatching thread:
+        //adding TrayIcon.
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI();
             }
         });
-		
+        LogManager.getLogManager().reset();
+
+     // Get the logger for "org.jnativehook" and set the level to off.
+     Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+     logger.setLevel(Level.OFF);
 		try {
 			GlobalScreen.registerNativeHook();
 		}
@@ -123,26 +123,189 @@ public class GlobalKeyListenerExample implements NativeKeyListener {
 			System.exit(1);
 		}
 
-		GlobalScreen.addNativeKeyListener(new GlobalKeyListenerExample());
+		GlobalScreen.addNativeKeyListener(new CcTranslator());
 	
-		shell.open();
-        shell.setVisible(false);
 
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		display.dispose();
 	}
 	
-	public String translate(String raw) {
-	    final Translate translate = new Translate.Builder()
+	public String translate(String raw) throws RetrieveTokenKeyFailedException, TranslateFailedException, IllegalTokenKeyException, URISyntaxException {
+		List <String> times = new ArrayList();
+		System.setProperty("java.net.useSystemProxies","true");
+		List<Proxy> l = ProxySelector.getDefault().select(new URI("http://java.sun.com/"));
+		Proxy theProxy = null;
+		for (Iterator iter = l.iterator(); iter.hasNext(); )  {
+		  Proxy proxy = (Proxy) iter.next();
+		  InetSocketAddress addr = (InetSocketAddress)proxy.address();
+		  if(addr!=null){
+			  System.out.println("proxy hostname : " + addr.getHostName());
+			  System.out.println("proxy port : " + addr.getPort());  
+		  }
+		  theProxy = new Proxy(Proxy.Type.HTTP,  new InetSocketAddress("192.168.1.28", 8080));
+
+		}
+		System.out.println(theProxy);
+
+			//HttpsClient.testIt();
+		  theProxy = new Proxy(Proxy.Type.HTTP,  new InetSocketAddress("192.168.1.28", 8080));
+
+		System.setProperty("java.net.useSystemProxies","false");
+		
+	
+
+		final Translate translate = new Translate.Builder()
 	            .logLevel(Translate.LogLevel.BODY)
+	            .proxy(Proxy.NO_PROXY)
 	            .build();
 	    
 	        translate.refreshTokenKey();
-	        TranslateResult result = translate.translate(raw,Translate.SOURCE_LANG_AUTO, 'zh_CN');
+	        TranslateResult result = translate.translate(raw,Translate.SOURCE_LANG_AUTO, isChinese(raw)?"en":"zh_CN");
+			return result.getTargetText();
 	        
 	}
+	// 判断一个字符是否是中文
+    public static boolean isChinese(char c) {
+        return c >= 0x4E00 &&  c <= 0x9FA5;// 根据字节码判断
+    }
+    // 判断一个字符串是否含有中文
+    public static boolean isChinese(String str) {
+        if (str == null) return false;
+        for (char c : str.toCharArray()) {
+            if (isChinese(c)) return true;// 有一个中文字符就返回
+        }
+        return false;
+    }
+
+
+    private static void createAndShowGUI() {
+        //Check the SystemTray support
+        if (!SystemTray.isSupported()) {
+            System.out.println("SystemTray is not supported");
+            return;
+        }
+        final PopupMenu popup = new PopupMenu();
+        final TrayIcon trayIcon =
+                new TrayIcon(createImage("/cc.gif", "tray icon"));
+        final SystemTray tray = SystemTray.getSystemTray();
+        
+        // Create a popup menu components
+        MenuItem aboutItem = new MenuItem("About");
+        CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
+        CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
+        Menu displayMenu = new Menu("Display");
+        MenuItem errorItem = new MenuItem("Error");
+        MenuItem warningItem = new MenuItem("Warning");
+        MenuItem infoItem = new MenuItem("Info");
+        MenuItem noneItem = new MenuItem("None");
+        MenuItem exitItem = new MenuItem("Exit");
+        
+        //Add components to popup menu
+        popup.add(aboutItem);
+        popup.addSeparator();
+        popup.add(cb1);
+        popup.add(cb2);
+        popup.addSeparator();
+        popup.add(displayMenu);
+        displayMenu.add(errorItem);
+        displayMenu.add(warningItem);
+        displayMenu.add(infoItem);
+        displayMenu.add(noneItem);
+        popup.add(exitItem);
+        
+        trayIcon.setPopupMenu(popup);
+        
+        try {
+            tray.add(trayIcon);
+        } catch (AWTException e) {
+            System.out.println("TrayIcon could not be added.");
+            return;
+        }
+        
+        trayIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null,
+                        "This dialog box is run from System Tray");
+            }
+        });
+        
+        aboutItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null,
+                        "This dialog box is run from the About menu item");
+            }
+        });
+        
+        cb1.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                int cb1Id = e.getStateChange();
+                if (cb1Id == ItemEvent.SELECTED){
+                    trayIcon.setImageAutoSize(true);
+                } else {
+                    trayIcon.setImageAutoSize(false);
+                }
+            }
+        });
+        
+        cb2.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                int cb2Id = e.getStateChange();
+                if (cb2Id == ItemEvent.SELECTED){
+                    trayIcon.setToolTip("Sun TrayIcon");
+                } else {
+                    trayIcon.setToolTip(null);
+                }
+            }
+        });
+        
+        ActionListener listener = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MenuItem item = (MenuItem)e.getSource();
+                //TrayIcon.MessageType type = null;
+                System.out.println(item.getLabel());
+                if ("Error".equals(item.getLabel())) {
+                    //type = TrayIcon.MessageType.ERROR;
+                    trayIcon.displayMessage("Sun TrayIcon Demo",
+                            "This is an error message", TrayIcon.MessageType.ERROR);
+                    
+                } else if ("Warning".equals(item.getLabel())) {
+                    //type = TrayIcon.MessageType.WARNING;
+                    trayIcon.displayMessage("Sun TrayIcon Demo",
+                            "This is a warning message", TrayIcon.MessageType.WARNING);
+                    
+                } else if ("Info".equals(item.getLabel())) {
+                    //type = TrayIcon.MessageType.INFO;
+                    trayIcon.displayMessage("Sun TrayIcon Demo",
+                            "This is an info message", TrayIcon.MessageType.INFO);
+                    
+                } else if ("None".equals(item.getLabel())) {
+                    //type = TrayIcon.MessageType.NONE;
+                    trayIcon.displayMessage("Sun TrayIcon Demo",
+                            "This is an ordinary message", TrayIcon.MessageType.NONE);
+                }
+            }
+        };
+        
+        errorItem.addActionListener(listener);
+        warningItem.addActionListener(listener);
+        infoItem.addActionListener(listener);
+        noneItem.addActionListener(listener);
+        
+        exitItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tray.remove(trayIcon);
+                System.exit(0);
+            }
+        });
+    }
+    
+    //Obtain the image URL
+    protected static Image createImage(String path, String description) {
+        URL imageURL = CcTranslator.class.getResource(path);
+        
+        if (imageURL == null) {
+            System.err.println("Resource not found: " + path);
+            return null;
+        } else {
+            return (new ImageIcon(imageURL, description)).getImage();
+        }
+    }
 }
