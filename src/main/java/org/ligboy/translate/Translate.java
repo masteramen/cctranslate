@@ -60,14 +60,14 @@ public class Translate {
                 .connectTimeout(builder.connectTimeout, builder.connectTimeoutTimeUnit)
                 .writeTimeout(builder.writeTimeout, builder.writeTimeoutTimeUnit)
                 .readTimeout(builder.readTimeout, builder.readTimeoutTimeUnit)
-                //.proxy(builder.proxy)
+                .proxy(builder.proxy)
                 ;
-/*        if (builder.proxySelector != null) {
+        if (builder.proxySelector != null) {
             clientBuilder.proxySelector(builder.proxySelector);
         }
         if (builder.dns != null) {
             clientBuilder.dns(builder.dns);
-        }*/
+        }
         Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
                 .client(clientBuilder.build())
                 .addConverterFactory(ScalarsConverterFactory.create())
