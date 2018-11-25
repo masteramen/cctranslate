@@ -2,22 +2,18 @@ package cc.translate;
 
 import java.awt.AWTException;
 import java.awt.CheckboxMenuItem;
-import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
-import java.awt.Robot;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -35,9 +31,7 @@ import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -58,9 +52,9 @@ public class CcTranslator implements NativeKeyListener {
 	private int cCount = 0;
 
 	public void nativeKeyPressed(NativeKeyEvent e) {
-		// System.out.println("Key Pressed: " +
-		// NativeKeyEvent.getKeyText(e.getKeyCode()));
-		if (e.getKeyCode() == NativeKeyEvent.VC_CONTROL) {
+		 System.out.println("Key Pressed: " +
+		 NativeKeyEvent.getKeyText(e.getKeyCode()));
+		if (e.getKeyCode() == NativeKeyEvent.VC_CONTROL || e.getKeyCode() == NativeKeyEvent.VC_META) {
 			this.ctrlKeyDown = true;
 		} else if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
 			try {
@@ -73,7 +67,7 @@ public class CcTranslator implements NativeKeyListener {
 
 	public void nativeKeyReleased(NativeKeyEvent e) {
 
-		if (e.getKeyCode() == NativeKeyEvent.VC_CONTROL) {
+		if (e.getKeyCode() == NativeKeyEvent.VC_CONTROL || e.getKeyCode() == NativeKeyEvent.VC_META) {
 			this.ctrlKeyDown = false;
 		}
 		if (ctrlKeyDown && "C".equals(NativeKeyEvent.getKeyText(e.getKeyCode()))) {
@@ -88,7 +82,8 @@ public class CcTranslator implements NativeKeyListener {
 
 				public void run() {
 					try {
-						Notify.notify(translate(Notify.getgetSystemClipboardData()));
+
+						Utils.notify(translate(Utils.getgetSystemClipboardData()));
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -105,7 +100,45 @@ public class CcTranslator implements NativeKeyListener {
 	}
 
 	public static void main(String[] args) throws URISyntaxException {
+		initNetWork();
+		initGUI();
+		initNativeHook();
 
+	}
+
+	private static void initGUI() {
+		//System.setProperty("java.awt.headless", "true");
+		System.setProperty("apple.awt.UIElement", "true");
+
+		UIManager.put("swing.boldMetal", Boolean.FALSE);
+		// Schedule a job for the event-dispatching thread:
+		// adding TrayIcon.
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				System.out.println("ui");
+				createAndShowGUI();
+			}
+		});
+	}
+
+	private static void initNativeHook() {
+		LogManager.getLogManager().reset();
+
+		// Get the logger for "org.jnativehook" and set the level to off.
+		Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+		logger.setLevel(Level.OFF);
+		try {
+			GlobalScreen.registerNativeHook();
+		} catch (NativeHookException ex) {
+			System.err.println("There was a problem registering the native hook.");
+			System.err.println(ex.getMessage());
+
+		}
+
+		GlobalScreen.addNativeKeyListener(new CcTranslator());
+	}
+
+	private static void initNetWork() {
 		System.setProperty("java.net.useSystemProxies", "true");
 		defaultProxySelector = ProxySelector.getDefault();
 		ProxySelector.setDefault(new ProxySelector() {
@@ -143,38 +176,6 @@ public class CcTranslator implements NativeKeyListener {
 			}
 
 		});
-		/* Turn off metal's use of bold fonts */
-		UIManager.put("swing.boldMetal", Boolean.FALSE);
-		// Schedule a job for the event-dispatching thread:
-		// adding TrayIcon.
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				createAndShowGUI();
-			}
-		});
-		LogManager.getLogManager().reset();
-
-		// Get the logger for "org.jnativehook" and set the level to off.
-		Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
-		logger.setLevel(Level.OFF);
-		try {
-			GlobalScreen.registerNativeHook();
-		} catch (NativeHookException ex) {
-			System.err.println("There was a problem registering the native hook.");
-			System.err.println(ex.getMessage());
-
-		}
-
-		GlobalScreen.addNativeKeyListener(new CcTranslator());
-
-		try {
-			translate("hello");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
-		}
-
 	}
 
 	public static String translate(String raw) throws RetrieveTokenKeyFailedException, TranslateFailedException,

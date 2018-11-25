@@ -7,36 +7,37 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.net.URL;
 
+import dorkbox.notify.Notify;
+import dorkbox.notify.Pos;
+import dorkbox.util.ActionHandler;
 import fr.jcgay.notification.Application;
 import fr.jcgay.notification.Icon;
 import fr.jcgay.notification.Notification;
 import fr.jcgay.notification.Notifier;
 import fr.jcgay.notification.SendNotification;
 
-public class Notify {
+public class Utils {
 
 	public static void notify(String message){
-        URL icon = Notify.class.getResource("/dialog-clean.png");
 
-        Application application = Application.builder()
-            .id("notify-example")
-            .name("Notify Example")
-            .icon(Icon.create(icon, "app"))
-            .build();
-
-        Notifier notifier = new SendNotification()
-            .setApplication(application)
-            .setChosenNotifier("notify")
-            .initNotifier();
-
-        Notification notification = Notification.builder()
-            .title("Notify Notification")
-            .message(message)
-            .icon(Icon.create(icon, "ok"))
-            .build();
-
-        notifier.send(notification);
-        notifier.close();
+        Notify notify = Notify.create()
+         .title("翻译" )
+         .text(message)
+         .hideAfter(5000)
+         .position(Pos.TOP_RIGHT)
+         //     .setScreen(0)
+         .darkStyle()
+         // .shake(1300, 4)
+         //.image(ImageIO.read(NotifyTest.class.getResource("/cc.gif")))
+         //.hideCloseButton()
+         .onAction(new ActionHandler<Notify>() {
+             @Override
+             public
+             void handle(final Notify arg0) {
+                 System.err.println("Notification 1 clicked on!");
+             }
+         });
+        notify.show();
 	}
 	
 	public static String getgetSystemClipboardData(){
