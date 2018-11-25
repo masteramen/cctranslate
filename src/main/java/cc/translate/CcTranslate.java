@@ -53,6 +53,8 @@ public class CcTranslate implements NativeKeyListener,NativeMouseInputListener {
 	private static CheckboxMenuItem cbUsingSystemProxy;
 	private boolean ctrlKeyDown = false;
 	private int cCount = 0;
+	private Thread unThread;
+	private boolean unregisterNativeHook;
 
 	public void nativeKeyPressed(NativeKeyEvent e) {
 		 
@@ -64,6 +66,34 @@ public class CcTranslate implements NativeKeyListener,NativeMouseInputListener {
 			} catch (NativeHookException e1) {
 				e1.printStackTrace();
 			}
+		}
+		if(System.getProperty("os.name").toLowerCase().indexOf("mac")>-1) {
+			this.unregisterNativeHook = true;
+			if(this.unThread == null) {
+				this.unThread = new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						try {
+							while(true) {
+								do {
+									if(!unregisterNativeHook)continue;
+									unregisterNativeHook=false;
+									Thread.sleep(5000);
+								}while(unregisterNativeHook);
+								GlobalScreen.unregisterNativeHook();
+								GlobalScreen.registerNativeHook();
+							}
+						}
+						catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
+				});
+				this.unThread.start();
+			}
+
 		}
 	}
 
@@ -138,6 +168,7 @@ public class CcTranslate implements NativeKeyListener,NativeMouseInputListener {
 		CcTranslate cc = new CcTranslate();
 		GlobalScreen.addNativeKeyListener(cc);
 		GlobalScreen.addNativeMouseMotionListener(cc);
+		
 
 	}
 
