@@ -15,10 +15,13 @@
  */
 package dorkbox.notify;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,6 +36,7 @@ import dorkbox.util.ActionHandler;
 import dorkbox.util.ActionHandlerLong;
 import dorkbox.util.ScreenUtil;
 import dorkbox.util.swing.SwingActiveRender;
+import com.sun.awt.AWTUtilities;
 
 @SuppressWarnings({"FieldCanBeLocal"})
 class LookAndFeel {
@@ -89,6 +93,8 @@ class LookAndFeel {
     private volatile Tween hideTween = null;
 
     private final ActionHandler<Notify> onGeneralAreaClickAction;
+
+	private float alpha= 1f;
 
     LookAndFeel(final INotify notify, final Window parent,
                 final NotifyCanvas notifyCanvas,
@@ -388,25 +394,77 @@ class LookAndFeel {
             sourceLook.setLocation(anchorX, targetY);
 
             if (sourceLook.hideAfterDurationInSeconds > 0 && sourceLook.hideTween == null) {
-                // begin a timeline to get rid of the popup (default is 5 seconds)
-                animation.to(sourceLook, NotifyAccessor.PROGRESS, accessor, sourceLook.hideAfterDurationInSeconds)
-                         .target(NotifyCanvas.WIDTH)
-                         .ease(TweenEquations.Linear)
-                         .addCallback(new TweenCallback() {
-                            @Override
-                            public
-                            void onEvent(final int type, final BaseTween<?> source) {
-                                if (type == Events.COMPLETE) {
-                                    sourceLook.notify.close();
-                                }
-                            }
-                        })
-                         .start();
+                animationProgressAndFadeout(sourceLook);
+                
+
                 
 
             }
         }
     }
+
+	private static void animationProgressAndFadeout(final LookAndFeel sourceLook) {
+		// begin a timeline to get rid of the popup (default is 5 seconds)
+		animation.to(sourceLook, NotifyAccessor.PROGRESS, accessor, sourceLook.hideAfterDurationInSeconds)
+		         .target(NotifyCanvas.WIDTH)
+		         .ease(TweenEquations.Linear)
+		         .addCallback(new TweenCallback() {
+		            @Override
+		            public
+		            void onEvent(final int type, final BaseTween<?> source) {
+		                if (type == Events.COMPLETE) {
+		                	
+		                	animation.to(sourceLook, NotifyAccessor.ALPHA, accessor, sourceLook.hideAfterDurationInSeconds)
+		                    .target(0.0f)
+		                    .ease(TweenEquations.Linear)
+		                    .addCallback(new TweenCallback() {
+		                       @Override
+		                       public
+		                       void onEvent(final int type, final BaseTween<?> source) {
+		                           if (type == Events.COMPLETE) {
+		                               sourceLook.notify.close();
+		                           }
+		                       }
+		                   })
+		                    .start();
+
+		                  }
+		            }
+		        })
+		         .start();
+		
+        sourceLook.notifyCanvas.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+             animationProgressAndFadeout(sourceLook);
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				sourceLook.setProgress(0);
+				sourceLook.setAlpha(1.0f);
+				animation.cancelTarget(sourceLook);
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+		});
+	}
 
     // only called on the swing app or SwingActiveRender thread
     private static
@@ -500,6 +558,14 @@ class LookAndFeel {
         return notifyCanvas.getProgress();
     }
 
+    void setAlpha(final float alpha) {
+    	AWTUtilities.setWindowOpacity(parent, alpha);
+    	this.alpha = alpha;
+
+    }
+    float getAlpha() {
+    	return alpha;
+    }
     /**
      * we have to remove the active renderer BEFORE we set the visibility status.
      */

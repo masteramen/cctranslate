@@ -27,6 +27,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -36,8 +37,10 @@ import javax.swing.JPanel;
 
 @SuppressWarnings("FieldCanBeLocal")
 class NotifyCanvas extends Canvas {
+    static final int WIDTH = 343;
+
     private static final Stroke stroke = new BasicStroke(2);
-    private static final int closeX = 282;
+    private static final int closeX = WIDTH-20;
     private static final int closeY = 2;
 
     private static final int Y_1 = closeY + 5;
@@ -45,7 +48,6 @@ class NotifyCanvas extends Canvas {
     private static final int Y_2 = closeY + 11;
     private static final int X_2 = closeX + 11;
 
-    static final int WIDTH = 300;
     static final int HEIGHT = 87;
     private static final int PROGRESS_HEIGHT = HEIGHT - 2;
 
@@ -80,9 +82,10 @@ class NotifyCanvas extends Canvas {
         showCloseButton = !notification.hideCloseButton;
 
         // now we setup the rendering of the image
-        cachedImage = renderBackgroundInfo(notification.title, notification.text, this.theme, this.imageIcon);
-        setSize(cachedImage.getWidth(), cachedImage.getHeight());
-
+        //cachedImage = renderBackgroundInfo(notification.title, notification.text, this.theme, this.imageIcon);
+        //setSize(cachedImage.getWidth(), cachedImage.getHeight());
+        Dimension dim = getNotifySize(notification.title, notification.text, this.theme, this.imageIcon);
+        setSize(dim);
     }
 
     void setProgress(final int progress) {
@@ -100,7 +103,9 @@ class NotifyCanvas extends Canvas {
 
         // use our cached image, so we don't have to re-render text/background/etc
         try {
-            g.drawImage(cachedImage, 0, 0, null);
+            //g.drawImage(cachedImage, 0, 0, null);
+            drawContent(this.notification.title, this.notification.text, theme, imageIcon, (Graphics2D) g);
+
         } catch (Exception ignored) {
             // have also seen (happened after screen/PC was "woken up", in Xubuntu 16.04):
             // java.lang.ClassCastException:sun.awt.image.BufImgSurfaceData cannot be cast to sun.java2d.xr.XRSurfaceData at sun.java2d.xr.XRPMBlitLoops.cacheToTmpSurface(XRPMBlitLoops.java:148)
@@ -120,12 +125,10 @@ class NotifyCanvas extends Canvas {
             cachedImage = renderBackgroundInfo(notification.title, notification.text, this.theme, imageIcon);
 
             // try to draw again
-            try {
-            	JPanel panel = new JPanel();
-            	panel.add(new JLabel("HELLO"));
+            /*try {
                 g.drawImage(cachedImage, 0, 0, null);
             } catch (Exception ignored2) {
-            }
+            }*/
         }
 
         // the progress bar and close button are the only things that can change, so we always draw them every time
@@ -139,7 +142,7 @@ class NotifyCanvas extends Canvas {
 
                 final Point p = getMousePosition();
                 // reasonable position for detecting mouse over
-                if (p != null && p.getX() >= 280 && p.getY() <= 20) {
+                if (p != null && p.getX() >= WIDTH-20 && p.getY() <= 20) {
                     g3.setColor(Color.RED);
                 }
                 else {
@@ -152,7 +155,7 @@ class NotifyCanvas extends Canvas {
             }
 
             g2.setColor(theme.progress_FG);
-            g2.fillRect(0, cachedImage.getHeight()-2, progress, 2);
+            g2.fillRect(0, getHeight()-2, progress, 2);
         } finally {
             g2.dispose();
         }
@@ -172,6 +175,91 @@ class NotifyCanvas extends Canvas {
         
         return dummyEditorPane.getPreferredSize().height;
     }
+    
+    private static
+    void drawContent(final String title,
+                                       final String notificationText,
+                                       final Theme theme,
+                                       final ImageIcon imageIcon,Graphics2D g2) {
+        
+        int posX = 5;
+
+        // ICON
+        if (imageIcon != null) {
+            posX = 60;
+            // Draw the image
+        }        
+    	int width = WIDTH - posX - 2;
+        int height = getContentHeight(theme.mainTextFont,width,notificationText);
+
+        int imageHeight = height+35;
+        g2.setColor(theme.panel_BG);
+           // g2.fillRect(0, 0, WIDTH, imageHeight);
+            RoundRectangle2D currRec = new RoundRectangle2D.Float(0, 0, WIDTH, imageHeight, 20, 20);
+            g2.fill(currRec);
+            // Draw the title text
+            g2.setColor(theme.titleText_FG);
+            
+            g2.drawString(title, 4, 20);
+
+
+            int posY = -8;
+            if(imageIcon!=null) {
+                imageIcon.paintIcon(null, g2, 5, 30);
+            }
+
+
+            // Draw the main text
+            int length = notificationText.length();
+            StringBuilder text = new StringBuilder(length);
+
+            // are we "html" already? just check for the starting tag and strip off END html tag
+            if (length >= 13 && notificationText.regionMatches(true, length - 7, "</html>", 0, 7)) {
+                text.append(notificationText);
+                text.delete(text.length() - 7, text.length());
+
+                length -= 7;
+            }
+            else {
+                text.append("<html>");
+                text.append(notificationText);
+            }
+
+
+            text.append("</html>");
+
+            JLabel mainTextLabel = new JLabel();
+            mainTextLabel.setForeground(theme.mainText_FG);
+            mainTextLabel.setFont(theme.mainTextFont);
+            mainTextLabel.setVerticalAlignment(mainTextLabel.TOP);
+            mainTextLabel.setHorizontalAlignment(mainTextLabel.LEFT);
+            mainTextLabel.setText(text.toString());
+            mainTextLabel.setBounds(0, 0, width,height);
+            //int height = getContentHeight(theme.mainTextFont,WIDTH - posX - 2,notificationText);
+           // mainTextLabel.setBounds(0, 0, WIDTH - posX - 2, height);
+            g2.translate(posX, 30);
+            mainTextLabel.paint(g2);
+            g2.translate(-posX, -30);
+        
+
+    }
+    
+    private static
+    Dimension getNotifySize(final String title,
+                                       final String notificationText,
+                                       final Theme theme,
+                                       final ImageIcon imageIcon) {
+        
+        int posX = 5;
+
+        if (imageIcon != null) {
+            posX = 60;
+        }        
+    	int width = WIDTH - posX - 2;
+        int height = getContentHeight(theme.mainTextFont,width,notificationText);
+
+       return new Dimension(WIDTH, height+35);
+    }
     private static
     BufferedImage renderBackgroundInfo(final String title,
                                        final String notificationText,
@@ -186,7 +274,7 @@ class NotifyCanvas extends Canvas {
             // Draw the image
         }        
     	int width = WIDTH - posX - 2;
-//模糊
+
         int height = getContentHeight(theme.mainTextFont,width,notificationText);
 
         int imageHeight = height+35;
@@ -194,7 +282,7 @@ class NotifyCanvas extends Canvas {
         Graphics2D g2 = image.createGraphics();
 
 
-        /*g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
         g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
@@ -202,9 +290,8 @@ class NotifyCanvas extends Canvas {
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-*/
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+
+       // g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 
         
         try {
@@ -256,7 +343,7 @@ class NotifyCanvas extends Canvas {
             mainTextLabel.setForeground(theme.mainText_FG);
             mainTextLabel.setFont(theme.mainTextFont);
             mainTextLabel.setVerticalAlignment(mainTextLabel.TOP);
-            mainTextLabel.setHorizontalAlignment(mainTextLabel.LEFT);
+            mainTextLabel.setHorizontalAlignment(mainTextLabel.CENTER);
             mainTextLabel.setText(text.toString());
             mainTextLabel.setBounds(0, 0, width,height);
             //int height = getContentHeight(theme.mainTextFont,WIDTH - posX - 2,notificationText);

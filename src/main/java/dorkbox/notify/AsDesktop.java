@@ -21,6 +21,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
@@ -28,6 +29,7 @@ import javax.swing.JWindow;
 
 import dorkbox.util.ScreenUtil;
 import dorkbox.util.SwingUtil;
+import com.sun.awt.AWTUtilities;
 
 // we can't use regular popup, because if we have no owner, it won't work!
 // instead, we just create a JWindow and use it to hold our content
@@ -113,6 +115,11 @@ class AsDesktop extends JWindow implements INotify {
     }
 
     @Override
+    public void setLocation(int x, int y) {
+    	// TODO Auto-generated method stub
+    	super.setLocation(x, y);
+    }
+    @Override
     public
     void setVisible(final boolean visible) {
         // was it already visible?
@@ -128,6 +135,7 @@ class AsDesktop extends JWindow implements INotify {
 
         // this is because the order of operations are different based upon visibility.
         look.updatePositionsPost(visible);
+        AWTUtilities.setWindowShape(this, new RoundRectangle2D.Double(0, 0, this.getWidth(), this.getHeight(), 20, 20));
 
         if (visible) {
             this.toFront();

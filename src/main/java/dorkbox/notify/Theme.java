@@ -40,9 +40,9 @@ class Theme {
         this.mainTextFont = FontUtil.parseFont(mainTextFont);
 
         if (isDarkTheme) {
-            panel_BG = Color.DARK_GRAY;
-            titleText_FG = Color.GRAY;
-            mainText_FG = Color.WHITE;
+            panel_BG = new Color(40,40,40);
+            titleText_FG = Color.WHITE;
+            mainText_FG = new Color(230,230,230);
             //mainText_FG = Color.LIGHT_GRAY;
             closeX_FG = Color.GRAY;
             progress_FG = Color.gray;

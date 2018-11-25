@@ -22,6 +22,8 @@ class NotifyAccessor implements TweenAccessor<LookAndFeel> {
     static final int Y_POS = 1;
     static final int X_Y_POS = 2;
     static final int PROGRESS = 3;
+    //透明
+    static final int ALPHA = 4;
 
 
     NotifyAccessor() {
@@ -41,6 +43,9 @@ class NotifyAccessor implements TweenAccessor<LookAndFeel> {
             case PROGRESS:
                 returnValues[0] = (float) target.getProgress();
                 return 1;
+            case ALPHA:
+                returnValues[0] = (float) target.getAlpha();
+                return 1;
         }
         return 1;
     }
@@ -58,6 +63,9 @@ class NotifyAccessor implements TweenAccessor<LookAndFeel> {
                 return;
             case PROGRESS:
                 target.setProgress((int) newValues[0]);
+                return;
+            case ALPHA:
+                target.setAlpha(newValues[0]);
                 return;
         }
     }

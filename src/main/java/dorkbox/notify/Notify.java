@@ -66,13 +66,13 @@ class Notify {
      * This is the title font used by a notification.
      */
     @Property
-    public static String TITLE_TEXT_FONT = "Serif  16";
+    public static String TITLE_TEXT_FONT = "Source Code Pro BOLD 18";
 
     /**
      * This is the main text font used by a notification.
      */
     @Property
-    public static String MAIN_TEXT_FONT = "Serif  14";
+    public static String MAIN_TEXT_FONT = "Source Code Pro 14";
 
     /**
      * How long we want it to take for the popups to relocate when one is closed

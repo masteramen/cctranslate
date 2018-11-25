@@ -43,18 +43,13 @@ class NotifyTest {
          .title("翻译" )
          .text("This is a notification " + 2 + "" +
                "notifi jkj kjkj kjkj kjk kjkj kjkjkk jkjj kj jkjkjkk jkkjkj  jk jkkjk kj jkj"
-               + "k kjkjk kjj kk kjkjkj jjkjkjjkj jjk abcd efg hjk 1 2 3 4 5 6 7 8 a"
-               + "k kjkjk kjj kk kjkjkj jjkjkjjkj jjk abcd efg hjk 1 2 3 4 5 6 7 8 a"
-               + "k kjkjk kjj kk kjkjkj jjkjkjjkj jjk abcd efg hjk 1 2 3 4 5 6 7 8 a"
-               + "k kjkjk kjj kk kjkjkj jjkjkjjkj jjk abcd efg hjk 1 2 3 4 5 6 7 8 a"
-               + "k kjkjk kjj kk kjkjkj jjkjkjjkj jjk abcd efg hjk 1 2 3 4 5 6 7 8 a"
                + "lex gg gg g gg g")
          .hideAfter(5000)
          .position(Pos.TOP_RIGHT)
 //     .setScreen(0)
          .darkStyle()
-         // .shake(1300, 4)
-         //.image(ImageIO.read(NotifyTest.class.getResource("/cc.gif")))
+          .shake(1300, 4)
+         .image(ImageIO.read(NotifyTest.class.getResource("/cc.gif")))
          
     //.hideCloseButton()
          .onAction(new ActionHandler<Notify>() {

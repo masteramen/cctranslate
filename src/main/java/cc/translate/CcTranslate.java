@@ -39,21 +39,23 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
+import org.jnativehook.mouse.NativeMouseEvent;
+import org.jnativehook.mouse.NativeMouseInputListener;
 import org.ligboy.translate.Translate;
 import org.ligboy.translate.exception.IllegalTokenKeyException;
 import org.ligboy.translate.exception.RetrieveTokenKeyFailedException;
 import org.ligboy.translate.exception.TranslateFailedException;
 import org.ligboy.translate.model.TranslateResult;
 
-public class CcTranslator implements NativeKeyListener {
+public class CcTranslate implements NativeKeyListener,NativeMouseInputListener {
 	protected static boolean usingSystemProxy = true;
 	private static ProxySelector defaultProxySelector;
+	private static CheckboxMenuItem cbUsingSystemProxy;
 	private boolean ctrlKeyDown = false;
 	private int cCount = 0;
 
 	public void nativeKeyPressed(NativeKeyEvent e) {
-		 System.out.println("Key Pressed: " +
-		 NativeKeyEvent.getKeyText(e.getKeyCode()));
+		 
 		if (e.getKeyCode() == NativeKeyEvent.VC_CONTROL || e.getKeyCode() == NativeKeyEvent.VC_META) {
 			this.ctrlKeyDown = true;
 		} else if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
@@ -115,7 +117,6 @@ public class CcTranslator implements NativeKeyListener {
 		// adding TrayIcon.
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				System.out.println("ui");
 				createAndShowGUI();
 			}
 		});
@@ -134,8 +135,10 @@ public class CcTranslator implements NativeKeyListener {
 			System.err.println(ex.getMessage());
 
 		}
+		CcTranslate cc = new CcTranslate();
+		GlobalScreen.addNativeKeyListener(cc);
+		GlobalScreen.addNativeMouseMotionListener(cc);
 
-		GlobalScreen.addNativeKeyListener(new CcTranslator());
 	}
 
 	private static void initNetWork() {
@@ -263,15 +266,15 @@ public class CcTranslator implements NativeKeyListener {
         });
 
 		// Create a popup menu components
-		MenuItem aboutItem = new MenuItem("About");
+		MenuItem aboutItem = new MenuItem("关于cc translate");
 		//CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
 		//CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
-		CheckboxMenuItem cbUsingSystemProxy = new CheckboxMenuItem("Using System Proxy");
-		Menu displayMenu = new Menu("Display");
+		cbUsingSystemProxy = new CheckboxMenuItem("使用系统代理");
+		/*Menu displayMenu = new Menu("Display");
 		MenuItem errorItem = new MenuItem("Error");
 		MenuItem warningItem = new MenuItem("Warning");
 		MenuItem infoItem = new MenuItem("Info");
-		MenuItem noneItem = new MenuItem("None");
+		MenuItem noneItem = new MenuItem("None");*/
 		MenuItem exitItem = new MenuItem("Exit");
 
 		// Add components to popup menu
@@ -281,11 +284,12 @@ public class CcTranslator implements NativeKeyListener {
 		//popup.add(cb2);
 		popup.add(cbUsingSystemProxy);
 		popup.addSeparator();
-		popup.add(displayMenu);
+		/*popup.add(displayMenu);
 		displayMenu.add(errorItem);
 		displayMenu.add(warningItem);
 		displayMenu.add(infoItem);
 		displayMenu.add(noneItem);
+		*/
 		popup.add(exitItem);
 
 		trayIcon.setPopupMenu(popup);
@@ -379,7 +383,7 @@ public class CcTranslator implements NativeKeyListener {
 
 		aboutItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "This dialog box is run from the About menu item");
+				JOptionPane.showMessageDialog(null, "CC translate 是一款简单易用的翻译工具。");
 			}
 		});
 
@@ -389,9 +393,9 @@ public class CcTranslator implements NativeKeyListener {
 			public void itemStateChanged(ItemEvent e) {
 				int cb1Id = e.getStateChange();
 				if (cb1Id == ItemEvent.SELECTED) {
-					CcTranslator.usingSystemProxy = true;
+					CcTranslate.usingSystemProxy = true;
 				} else {
-					CcTranslator.usingSystemProxy = false;
+					CcTranslate.usingSystemProxy = false;
 				}
 			}
 		});
@@ -427,12 +431,12 @@ public class CcTranslator implements NativeKeyListener {
 				}
 			}
 		};
-
+		/*
 		errorItem.addActionListener(listener);
 		warningItem.addActionListener(listener);
 		infoItem.addActionListener(listener);
 		noneItem.addActionListener(listener);
-
+		 */
 		exitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tray.remove(trayIcon);
@@ -443,7 +447,7 @@ public class CcTranslator implements NativeKeyListener {
 
 	// Obtain the image URL
 	protected static Image createImage(String path, String description) {
-		URL imageURL = CcTranslator.class.getResource(path);
+		URL imageURL = CcTranslate.class.getResource(path);
 
 		if (imageURL == null) {
 			System.err.println("Resource not found: " + path);
@@ -451,5 +455,35 @@ public class CcTranslator implements NativeKeyListener {
 		} else {
 			return (new ImageIcon(imageURL, description)).getImage();
 		}
+	}
+
+	@Override
+	public void nativeMouseClicked(NativeMouseEvent nativeEvent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void nativeMousePressed(NativeMouseEvent nativeEvent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void nativeMouseReleased(NativeMouseEvent nativeEvent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void nativeMouseMoved(NativeMouseEvent nativeEvent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void nativeMouseDragged(NativeMouseEvent nativeEvent) {
+		// TODO Auto-generated method stub
+		
 	}
 }
