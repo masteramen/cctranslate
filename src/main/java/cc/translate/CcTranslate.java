@@ -47,7 +47,7 @@ import org.ligboy.translate.exception.RetrieveTokenKeyFailedException;
 import org.ligboy.translate.exception.TranslateFailedException;
 import org.ligboy.translate.model.TranslateResult;
 
-public class CcTranslate implements NativeKeyListener,NativeMouseInputListener {
+public class CcTranslate implements NativeKeyListener,NativeMouseInputListener ,Runnable {
 	protected static boolean usingSystemProxy = true;
 	private static ProxySelector defaultProxySelector;
 	private static CheckboxMenuItem cbUsingSystemProxy;
@@ -132,12 +132,18 @@ public class CcTranslate implements NativeKeyListener,NativeMouseInputListener {
 	}
 
 	public static void main(String[] args) throws URISyntaxException {
+		startThread();
 		initNetWork();
 		initGUI();
 		initNativeHook();
 
 	}
+	private static void startThread() {
 
+		Thread thread = new Thread(new CcTranslate());
+
+		thread.start();
+	}
 	private static void initGUI() {
 		//System.setProperty("java.awt.headless", "true");
 		System.setProperty("apple.awt.UIElement", "true");
@@ -515,6 +521,25 @@ public class CcTranslate implements NativeKeyListener,NativeMouseInputListener {
 	@Override
 	public void nativeMouseDragged(NativeMouseEvent nativeEvent) {
 		// TODO Auto-generated method stub
+		
+	}
+	
+    public static void windowsService(String args[]) throws Exception {
+        String cmd = "start";
+        if (args.length > 0) {
+            cmd = args[0];
+        }
+
+        if ("start".equals(cmd)) {
+            main(new String[]{});
+        } else {
+            System.exit(0);
+        }
+    }
+
+	@Override
+	public void run() {
+
 		
 	}
 }

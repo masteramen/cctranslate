@@ -5,11 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>cc</groupId>
-	<artifactId>translate</artifactId>
+	<artifactId>cctranslate</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>translate</name>
+	<name>cctranslate</name>
 	<description>Demo project for Spring Boot</description>
 
 <repositories>
@@ -136,6 +136,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			    <configuration>
+			        <skip>true</skip>
+			    </configuration>
 			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -158,13 +161,13 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>cc.translate</mainClass>
+                                    <mainClass>cc.translate.CcTranslate</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>cc-translate</finalName>
+                            <finalName>cctranslate</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
@@ -183,23 +186,67 @@
                         </goals>
                         <configuration>
                             <target>
-                                <copy todir="${installer.dir}/jre1.8.0_91">
-                                    <fileset dir="${project.basedir}/jre1.8.0_91" />
+                                <copy todir="${installer.dir}/jre1.8.0_181">
+                                    <fileset dir="${project.basedir}/external/jre1.8.0_181" />
                                 </copy>
                                 <copy todir="${installer.dir}/commons-daemon">
-                                    <fileset dir="${project.basedir}/commons-daemon" />
+                                    <fileset dir="${project.basedir}/external/commons-daemon" />
                                 </copy>
-                                <copy file="${project.build.directory}/opendata-ckan-pusher.jar" todir="${installer.dir}" />
+                                <copy file="${project.build.directory}/cctranslate.jar" todir="${installer.dir}" />
                                 <copy file="${project.basedir}/install.bat" todir="${installer.dir}" />
                                 <copy file="${project.basedir}/uninstall.bat" todir="${installer.dir}" />
-                                <copy file="${project.basedir}/upload-test.bat" todir="${installer.dir}" />
-                                <copy file="${project.basedir}/config/pusher.yml" todir="${installer.dir}" />
                                 <copy file="${project.basedir}/LICENSE" todir="${installer.dir}" />
                             </target>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+<!--             http://launch4j.sourceforge.net/docs.html#Configuration_file -->
+  <plugin>
+          <groupId>com.akathist.maven.plugins.launch4j</groupId>
+          <artifactId>launch4j-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>l4j-clui</id>
+              <phase>package</phase>
+              <goals><goal>launch4j</goal></goals>
+              <configuration>
+                <dontWrapJar>true</dontWrapJar>
+              
+                <headerType>gui</headerType>
+                <outfile>target/cc.exe</outfile>
+                <jar>target/cctranslate.jar</jar>
+                <errTitle>cc</errTitle>
+				  <singleInstance>
+				    <mutexName>cc</mutexName>
+				    <windowTitle>cc</windowTitle>
+				  </singleInstance>
+                <classPath>
+                  <mainClass>cc.translate.CcTranslate</mainClass>
+                  <addDependencies>false</addDependencies>
+                  <preCp>anything</preCp>
+                </classPath>
+                <jre>
+                  <minVersion>1.6.0</minVersion>
+                  <opts>
+                    <opt>-Djava.endorsed.dirs=./endorsed</opt>
+                  </opts>
+                </jre>
+                <versionInfo>
+                  <fileVersion>1.2.3.4</fileVersion>
+                  <txtFileVersion>txt file version?</txtFileVersion>
+                  <fileDescription>a description</fileDescription>
+                  <copyright>my copyright</copyright>
+                  <productVersion>4.3.2.1</productVersion>
+                  <txtProductVersion>txt product version</txtProductVersion>
+                  <productName>E-N-C-C</productName>
+                  <internalName>ccne</internalName>
+                  <originalFilename>original.exe</originalFilename>
+                </versionInfo>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -229,6 +276,8 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
+                
+
             </plugins>
         </pluginManagement>
     </build>

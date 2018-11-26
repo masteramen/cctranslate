@@ -1,1 +1,1 @@
-commons-daemon\prunsrv //DS//cc-translate
+commons-daemon\prunsrv //DS//CCTranslate
