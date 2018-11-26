@@ -47,7 +47,7 @@ import org.ligboy.translate.exception.RetrieveTokenKeyFailedException;
 import org.ligboy.translate.exception.TranslateFailedException;
 import org.ligboy.translate.model.TranslateResult;
 
-public class CcTranslate implements NativeKeyListener,NativeMouseInputListener ,Runnable {
+public class Cc implements NativeKeyListener,NativeMouseInputListener ,Runnable {
 	protected static boolean usingSystemProxy = true;
 	private static ProxySelector defaultProxySelector;
 	private static CheckboxMenuItem cbUsingSystemProxy;
@@ -140,7 +140,7 @@ public class CcTranslate implements NativeKeyListener,NativeMouseInputListener ,
 	}
 	private static void startThread() {
 
-		Thread thread = new Thread(new CcTranslate());
+		Thread thread = new Thread(new Cc());
 
 		thread.start();
 	}
@@ -171,7 +171,7 @@ public class CcTranslate implements NativeKeyListener,NativeMouseInputListener ,
 			System.err.println(ex.getMessage());
 
 		}
-		CcTranslate cc = new CcTranslate();
+		Cc cc = new Cc();
 		GlobalScreen.addNativeKeyListener(cc);
 		GlobalScreen.addNativeMouseMotionListener(cc);
 		
@@ -430,9 +430,9 @@ public class CcTranslate implements NativeKeyListener,NativeMouseInputListener ,
 			public void itemStateChanged(ItemEvent e) {
 				int cb1Id = e.getStateChange();
 				if (cb1Id == ItemEvent.SELECTED) {
-					CcTranslate.usingSystemProxy = true;
+					Cc.usingSystemProxy = true;
 				} else {
-					CcTranslate.usingSystemProxy = false;
+					Cc.usingSystemProxy = false;
 				}
 			}
 		});
@@ -484,7 +484,7 @@ public class CcTranslate implements NativeKeyListener,NativeMouseInputListener ,
 
 	// Obtain the image URL
 	protected static Image createImage(String path, String description) {
-		URL imageURL = CcTranslate.class.getResource(path);
+		URL imageURL = Cc.class.getResource(path);
 
 		if (imageURL == null) {
 			System.err.println("Resource not found: " + path);
