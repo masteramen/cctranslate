@@ -5,16 +5,10 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.net.URL;
 
 import dorkbox.notify.Notify;
 import dorkbox.notify.Pos;
 import dorkbox.util.ActionHandler;
-import fr.jcgay.notification.Application;
-import fr.jcgay.notification.Icon;
-import fr.jcgay.notification.Notification;
-import fr.jcgay.notification.Notifier;
-import fr.jcgay.notification.SendNotification;
 
 public class Utils {
 

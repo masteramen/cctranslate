@@ -47,7 +47,7 @@ import org.ligboy.translate.exception.RetrieveTokenKeyFailedException;
 import org.ligboy.translate.exception.TranslateFailedException;
 import org.ligboy.translate.model.TranslateResult;
 
-public class Cc implements NativeKeyListener,NativeMouseInputListener ,Runnable {
+public class Cc implements NativeKeyListener,NativeMouseInputListener{
 	protected static boolean usingSystemProxy = true;
 	private static ProxySelector defaultProxySelector;
 	private static CheckboxMenuItem cbUsingSystemProxy;
@@ -132,18 +132,12 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener ,Runnable 
 	}
 
 	public static void main(String[] args) throws URISyntaxException {
-		startThread();
 		initNetWork();
 		initGUI();
 		initNativeHook();
 
 	}
-	private static void startThread() {
 
-		Thread thread = new Thread(new Cc());
-
-		thread.start();
-	}
 	private static void initGUI() {
 		//System.setProperty("java.awt.headless", "true");
 		System.setProperty("apple.awt.UIElement", "true");
@@ -295,6 +289,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener ,Runnable 
                     if (SystemTray.isSupported()) {
                         SystemTray systemTray = SystemTray.getSystemTray();
                         systemTray.remove(trayIcon);
+                        Runtime.getRuntime().halt(0);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -537,9 +532,5 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener ,Runnable 
         }
     }
 
-	@Override
-	public void run() {
 
-		
-	}
 }
