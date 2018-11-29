@@ -357,9 +357,10 @@ class Notify {
     /**
      * Shows the notification. If the Notification is assigned to a screen, but shown inside a Swing/etc parent, the screen number will be
      * ignored.
+     * @return 
      */
     public
-    void show() {
+    INotify show() {
         // must be done in the swing EDT
         //noinspection Convert2Lambda
         SwingUtil.invokeAndWaitQuietly(new Runnable() {
@@ -377,11 +378,8 @@ class Notify {
                     theme = new Theme(Notify.TITLE_TEXT_FONT, Notify.MAIN_TEXT_FONT, notify.isDark);
                 }
 
-                if (appWindow == null) {
-                    notifyPopup = new AsDesktop(notify, image, theme);
-                } else {
-                    notifyPopup = new AsApplication(notify, image, appWindow, theme);
-                }
+                notifyPopup = new AsDesktop(notify, image, theme);
+
 
                 notifyPopup.setVisible(true);
 
@@ -391,8 +389,10 @@ class Notify {
             }
         });
 
+
         // don't need to hang onto these.
         icon = null;
+        return notifyPopup;
     }
 
     /**
@@ -464,5 +464,9 @@ class Notify {
     void onClose() {
         notifyPopup = null;
     }
+
+	public void updateUI() {
+		notifyPopup.updateUI();
+	}
 }
 

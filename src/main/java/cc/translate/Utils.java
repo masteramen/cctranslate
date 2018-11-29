@@ -15,7 +15,7 @@ public class Utils {
 	public static void notify(String message){
 
         Notify notify = Notify.create()
-         .title("翻译" )
+         .title("翻译..." )
          .text(message)
          .hideAfter(5000)
          .position(Pos.TOP_RIGHT)
@@ -32,6 +32,26 @@ public class Utils {
              }
          });
         notify.show();
+        
+
+        new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				String result = "";
+				try {
+					 result = Cc.translate(message);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					 result = "error!";
+				}
+				notify.text(result).title("翻译完毕");
+
+				notify.updateUI();
+			}
+		}).start();
+
 	}
 	
 	public static String getgetSystemClipboardData(){

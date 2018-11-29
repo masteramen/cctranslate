@@ -29,7 +29,7 @@ class TranslateConverterFactory extends Converter.Factory {
 
     static final TranslateConverterFactory DEFAULT = new TranslateConverterFactory();
 
-    private static final Pattern PATTERN_TOKEN_KEY = Pattern.compile("TKK='(.*?)';");
+    private static final Pattern PATTERN_TOKEN_KEY = Pattern.compile("tkk[=:]'(.*?)'[;,]",Pattern.CASE_INSENSITIVE);
 
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
@@ -75,7 +75,7 @@ class TranslateConverterFactory extends Converter.Factory {
             return new Converter<ResponseBody, TokenKey>() {
                 @Override
                 public TokenKey convert(ResponseBody value) throws IOException {
-                    String body = value.string();
+                    String body = value.string();System.out.println(body);
                     if (!body.isEmpty()) {
                         Matcher matcher = PATTERN_TOKEN_KEY.matcher(body);
                         if (matcher.find()) {
@@ -89,7 +89,7 @@ class TranslateConverterFactory extends Converter.Factory {
                                 engine = scriptEngineManager.getEngineByName("JavaScript");
                             }
                             try {
-                                String key = (String) engine.eval(matcher.group());
+                                String key = ""+ engine.eval(matcher.group().replaceAll("[^\\d.]*", ""));
                                 TokenKey tokenKey = new TokenKey();
                                 tokenKey.setKey(key);
                                 return tokenKey;

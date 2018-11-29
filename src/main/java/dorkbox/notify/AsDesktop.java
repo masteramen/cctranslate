@@ -41,6 +41,8 @@ class AsDesktop extends JWindow implements INotify {
     private final LookAndFeel look;
     private final Notify notification;
 
+	private NotifyCanvas notifyCanvas;
+
 
     // this is on the swing EDT
     @SuppressWarnings("NumericCastThatLosesPrecision")
@@ -88,12 +90,15 @@ class AsDesktop extends JWindow implements INotify {
                        .getBounds();
 
 
-        NotifyCanvas notifyCanvas = new NotifyCanvas(this, notification, image, theme);
-        setSize(notifyCanvas.getWidth(), notifyCanvas.getHeight());
+        notifyCanvas = new NotifyCanvas(this, notification, image, theme);
+        
 
         getContentPane().add(notifyCanvas);
 
+        setSize(notifyCanvas.getNotifySize());
         look = new LookAndFeel(this, this, notifyCanvas, notification, bounds, true);
+      
+
     }
 
     @Override
@@ -135,7 +140,6 @@ class AsDesktop extends JWindow implements INotify {
 
         // this is because the order of operations are different based upon visibility.
         look.updatePositionsPost(visible);
-        AWTUtilities.setWindowShape(this, new RoundRectangle2D.Double(0, 0, this.getWidth(), this.getHeight(), 20, 20));
 
         if (visible) {
             this.toFront();
@@ -165,4 +169,11 @@ class AsDesktop extends JWindow implements INotify {
             }
         });
     }
+
+	@Override
+	public void updateUI() {
+		// TODO Auto-generated method stub
+		look.updateUI();
+
+	}
 }

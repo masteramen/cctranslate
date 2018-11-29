@@ -96,6 +96,8 @@ class LookAndFeel {
 
 	private float alpha= 1f;
 
+	public int height;
+
     LookAndFeel(final INotify notify, final Window parent,
                 final NotifyCanvas notifyCanvas,
                 final Notify notification,
@@ -107,7 +109,7 @@ class LookAndFeel {
         this.notifyCanvas = notifyCanvas;
         this.isDesktopNotification = isDesktopNotification;
 
-
+        this.height = notifyCanvas.getHeight();
         if (isDesktopNotification) {
             parent.addWindowListener(windowListener);
         }
@@ -382,7 +384,8 @@ class LookAndFeel {
                 }
 
                 if (showFromTop) {
-                    targetY = anchorY + (index * (NotifyCanvas.HEIGHT + SPACER)) + looks.getOffsetY();
+                   // targetY = anchorY + (index * (NotifyCanvas.HEIGHT + SPACER)) + looks.getOffsetY();
+                    targetY = anchorY + (index * (SPACER)) + looks.getHeightOf(index) + looks.getOffsetY();
                 }
                 else {
                     targetY = anchorY - (index * (NotifyCanvas.HEIGHT + SPACER)) + looks.getOffsetY();
@@ -394,16 +397,13 @@ class LookAndFeel {
             sourceLook.setLocation(anchorX, targetY);
 
             if (sourceLook.hideAfterDurationInSeconds > 0 && sourceLook.hideTween == null) {
-                animationProgressAndFadeout(sourceLook);
-                
-
-                
-
+               // animationProgressAndFadeout(sourceLook);
+ 
             }
         }
     }
 
-	private static void animationProgressAndFadeout(final LookAndFeel sourceLook) {
+	public static void animationProgressAndFadeout(final LookAndFeel sourceLook) {
 		// begin a timeline to get rid of the popup (default is 5 seconds)
 		animation.to(sourceLook, NotifyAccessor.PROGRESS, accessor, sourceLook.hideAfterDurationInSeconds)
 		         .target(NotifyCanvas.WIDTH)
@@ -422,7 +422,7 @@ class LookAndFeel {
 		                       public
 		                       void onEvent(final int type, final BaseTween<?> source) {
 		                           if (type == Events.COMPLETE) {
-		                               sourceLook.notify.close();
+		                              sourceLook.notify.close();
 		                           }
 		                       }
 		                   })
@@ -465,7 +465,60 @@ class LookAndFeel {
 			}
 		});
 	}
+    private static
+    boolean updatePopupFromMap(final LookAndFeel sourceLook) {
+        boolean showFromTop = isShowFromTop(sourceLook);
+        boolean popupsAreEmpty;
 
+        synchronized (popups) {
+            popupsAreEmpty = popups.isEmpty();
+            final PopupList allLooks = popups.get(sourceLook.idAndPosition);
+
+            // there are two loops because it is necessary to cancel + remove all tweens BEFORE adding new ones.
+            boolean adjustPopupPosition = true;
+
+            // have to adjust for offsets when the window-manager has a toolbar that consumes space and prevents overlap.
+            int offsetY = allLooks.getOffsetY();
+
+            for (int index = 0; index < allLooks.size(); index++) {
+                final LookAndFeel look = allLooks.get(index);
+                // the popups are ALL the same size!
+                // popups at TOP grow down, popups at BOTTOM grow up
+                int changedY;
+
+                if (showFromTop) {
+                    //changedY = look.anchorY + (look.popupIndex * (NotifyCanvas.HEIGHT + SPACER) + offsetY);
+                    changedY = look.anchorY + (look.popupIndex * (SPACER) + allLooks.getHeightOf(index)+ offsetY);
+
+                }
+                else {
+                    changedY = look.anchorY - (look.popupIndex * (NotifyCanvas.HEIGHT + SPACER) + offsetY);
+                }
+
+                // now animate that popup to it's new location
+                look.tween = animation.to(look, NotifyAccessor.Y_POS, accessor, MOVE_DURATION)
+                                      .target((float) changedY)
+                                      .ease(TweenEquations.Linear)
+                                      .addCallback(new TweenCallback() {
+                                          @Override
+                                          public
+                                          void onEvent(final int type, final BaseTween<?> source) {
+                                              if (type == Events.COMPLETE) {
+                                                  // make sure to remove the tween once it's done, otherwise .kill can do weird things.
+                                                  look.tween = null;
+                                              }
+                                          }
+                                      })
+                                      .start();
+                animation.to(look, NotifyAccessor.HEIGHT, accessor, 0.2F)
+                .target((float)look.height)
+                .ease(TweenEquations.Linear)
+                .start();
+            }
+        }
+
+        return popupsAreEmpty;
+    }
     // only called on the swing app or SwingActiveRender thread
     private static
     boolean removePopupFromMap(final LookAndFeel sourceLook) {
@@ -511,7 +564,9 @@ class LookAndFeel {
                 int changedY;
 
                 if (showFromTop) {
-                    changedY = look.anchorY + (look.popupIndex * (NotifyCanvas.HEIGHT + SPACER) + offsetY);
+                    //changedY = look.anchorY + (look.popupIndex * (NotifyCanvas.HEIGHT + SPACER) + offsetY);
+                    changedY = look.anchorY + (look.popupIndex * (SPACER) + allLooks.getHeightOf(index)+ offsetY);
+
                 }
                 else {
                     changedY = look.anchorY - (look.popupIndex * (NotifyCanvas.HEIGHT + SPACER) + offsetY);
@@ -566,6 +621,15 @@ class LookAndFeel {
     float getAlpha() {
     	return alpha;
     }
+    
+    void setHeight(final int height) {
+    	parent.setSize(parent.getWidth(), height);
+    }
+
+    int getHeight() {
+        return parent.getHeight();
+    }
+    
     /**
      * we have to remove the active renderer BEFORE we set the visibility status.
      */
@@ -597,4 +661,28 @@ class LookAndFeel {
             LookAndFeel.addPopupToMap(this);
         }
     }
+
+	public void updateUI() {
+
+        this.height = (int) notifyCanvas.getNotifySize().getHeight();
+        //updatePopupFromMap(this);
+
+        animation.to(this, NotifyAccessor.HEIGHT, accessor, 0.2F)
+        .target((float)this.height)
+        .ease(TweenEquations.Linear)
+        .addCallback(new TweenCallback() {
+            @Override
+            public
+            void onEvent(final int type, final BaseTween<?> source) {
+                if (type == Events.COMPLETE) {
+                        animationProgressAndFadeout(LookAndFeel.this);
+         
+                    
+                }
+            }
+        })
+        .start();
+	}
+
+
 }

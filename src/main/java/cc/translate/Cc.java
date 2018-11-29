@@ -105,7 +105,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 		if (ctrlKeyDown && "C".equals(NativeKeyEvent.getKeyText(e.getKeyCode()))) {
 			this.cCount += 1;
 
-		}
+		}else this.cCount = 0;
 		if (this.cCount >= 2) {
 			this.cCount = 0;
 			// System.out.println("Key Released: " +
@@ -115,7 +115,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 				public void run() {
 					try {
 
-						Utils.notify(translate(Utils.getgetSystemClipboardData()));
+						Utils.notify(Utils.getgetSystemClipboardData());
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -214,7 +214,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 
 	public static String translate(String raw) throws RetrieveTokenKeyFailedException, TranslateFailedException,
 			IllegalTokenKeyException, URISyntaxException {
-		final Translate translate = new Translate.Builder().logLevel(Translate.LogLevel.BODY)
+		final Translate translate = new Translate.Builder().logLevel(Translate.LogLevel.HEADERS)
 				.proxySelector(new ProxySelector() {
 
 					@Override

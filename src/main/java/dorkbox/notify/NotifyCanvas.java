@@ -84,7 +84,7 @@ class NotifyCanvas extends Canvas {
         // now we setup the rendering of the image
         //cachedImage = renderBackgroundInfo(notification.title, notification.text, this.theme, this.imageIcon);
         //setSize(cachedImage.getWidth(), cachedImage.getHeight());
-        Dimension dim = getNotifySize(notification.title, notification.text, this.theme, this.imageIcon);
+        Dimension dim = getNotifySize();
         setSize(dim);
     }
 
@@ -244,19 +244,15 @@ class NotifyCanvas extends Canvas {
 
     }
     
-    private static
-    Dimension getNotifySize(final String title,
-                                       final String notificationText,
-                                       final Theme theme,
-                                       final ImageIcon imageIcon) {
-        
+    public 
+    Dimension getNotifySize() {
         int posX = 5;
 
         if (imageIcon != null) {
             posX = 60;
         }        
     	int width = WIDTH - posX - 2;
-        int height = getContentHeight(theme.mainTextFont,width,notificationText);
+        int height = getContentHeight(theme.mainTextFont,width,notification.text);
 
        return new Dimension(WIDTH, height+35);
     }

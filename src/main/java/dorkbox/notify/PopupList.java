@@ -77,4 +77,12 @@ class PopupList {
     LookAndFeel get(final int index) {
         return popups.get(index);
     }
+
+	public int getHeightOf(int index) {
+		int iHeight = 0;
+		for(int i=0;i<index&&i<popups.size();i++){
+			iHeight+=popups.get(i).height;
+		}
+		return iHeight;
+	}
 }
