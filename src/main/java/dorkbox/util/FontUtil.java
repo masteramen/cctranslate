@@ -30,6 +30,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
 
+import javax.swing.JLabel;
+
 /**
  * Java Font utilities
  */
@@ -131,7 +133,8 @@ class FontUtil {
             //noinspection MagicConstant
             return new java.awt.Font(fontName, style, Integer.parseInt(size));
         } catch (Exception e) {
-            throw new RuntimeException("Unable to load font info from '" + fontInfo + "'", e);
+            //throw new RuntimeException("Unable to load font info from '" + fontInfo + "'", e);
+            return new JLabel().getFont();
         }
     }
 

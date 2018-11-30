@@ -48,25 +48,28 @@ import org.ligboy.translate.exception.TranslateFailedException;
 import org.ligboy.translate.model.TranslateResult;
 
 public class Cc implements NativeKeyListener,NativeMouseInputListener{
-	protected static boolean usingSystemProxy = true;
 	private static ProxySelector defaultProxySelector;
 	private static CheckboxMenuItem cbUsingSystemProxy;
+	private static CheckboxMenuItem cbRegistHook;
 	private boolean ctrlKeyDown = false;
 	private int cCount = 0;
 	private Thread unThread;
 	private boolean unregisterNativeHook;
+	
+	private static Cc instance = null;
+	
+	public static Cc getCcInstance(){
+		if(instance == null){
+			instance = new Cc();
+		}
+		return instance;
+	}
 
 	public void nativeKeyPressed(NativeKeyEvent e) {
 		 
 		if (e.getKeyCode() == NativeKeyEvent.VC_CONTROL || e.getKeyCode() == NativeKeyEvent.VC_META) {
 			this.ctrlKeyDown = true;
-		} else if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
-			try {
-				GlobalScreen.unregisterNativeHook();
-			} catch (NativeHookException e1) {
-				e1.printStackTrace();
-			}
-		}
+		} 
 		if(System.getProperty("os.name").toLowerCase().indexOf("mac")>-1) {
 			this.unregisterNativeHook = true;
 			if(this.unThread == null) {
@@ -81,8 +84,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 									unregisterNativeHook=false;
 									Thread.sleep(5000);
 								}while(unregisterNativeHook);
-								GlobalScreen.unregisterNativeHook();
-								GlobalScreen.registerNativeHook();
+								registHook();
 							}
 						}
 						catch (Exception e) {
@@ -98,7 +100,6 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 	}
 
 	public void nativeKeyReleased(NativeKeyEvent e) {
-		System.out.println(e);
 		if (e.getKeyCode() == NativeKeyEvent.VC_CONTROL || e.getKeyCode() == NativeKeyEvent.VC_META) {
 			this.ctrlKeyDown = false;
 		}
@@ -134,7 +135,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 	public static void main(String[] args) throws URISyntaxException {
 		initNetWork();
 		initGUI();
-		initNativeHook();
+		registHook();
 
 	}
 
@@ -152,7 +153,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 		});
 	}
 
-	private static void initNativeHook() {
+	private static void registHook() {
 		LogManager.getLogManager().reset();
 
 		// Get the logger for "org.jnativehook" and set the level to off.
@@ -160,18 +161,36 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 		logger.setLevel(Level.OFF);
 		try {
 			GlobalScreen.registerNativeHook();
+			GlobalScreen.addNativeKeyListener(Cc.getCcInstance());
+			GlobalScreen.addNativeMouseMotionListener(Cc.getCcInstance());
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					cbRegistHook.setState(true);;
+				}
+			});
+			
 		} catch (NativeHookException ex) {
 			System.err.println("There was a problem registering the native hook.");
 			System.err.println(ex.getMessage());
 
 		}
-		Cc cc = new Cc();
-		GlobalScreen.addNativeKeyListener(cc);
-		GlobalScreen.addNativeMouseMotionListener(cc);
+
 		
 
 	}
 
+	private static void unRegistHook(){
+		try {
+			GlobalScreen.removeNativeKeyListener(Cc.getCcInstance());
+			GlobalScreen.removeNativeMouseMotionListener(Cc.getCcInstance());
+			GlobalScreen.unregisterNativeHook();
+		} catch (NativeHookException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 	private static void initNetWork() {
 		System.setProperty("java.net.useSystemProxies", "true");
 		defaultProxySelector = ProxySelector.getDefault();
@@ -180,7 +199,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 			public List<Proxy> select(URI uri) {
 				List<Proxy> list = new ArrayList<>();
 				try {
-					if (usingSystemProxy) {
+					if (cbUsingSystemProxy!=null&& cbUsingSystemProxy.getState()) {
 						List<Proxy> l = defaultProxySelector.select(new URI("http://translate.google.cn"));
 						for (Iterator iter = l.iterator(); iter.hasNext();) {
 							Proxy proxy = (Proxy) iter.next();
@@ -213,7 +232,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 	}
 
 	public static String translate(String raw) throws  TranslateFailedException, IllegalTokenKeyException, RetrieveTokenKeyFailedException {
-		final Translate translate = new Translate.Builder().logLevel(Translate.LogLevel.HEADERS)
+		final Translate translate = new Translate.Builder().logLevel(Translate.LogLevel.NONE)
 				.proxySelector(new ProxySelector() {
 
 					@Override
@@ -221,7 +240,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 						List<Proxy> list = new ArrayList<>();
 						
 						try {
-							if (usingSystemProxy) {
+							if (cbUsingSystemProxy.getState()) {
 								List<Proxy> l = defaultProxySelector.select(new URI("http://translate.google.cn"));
 								for (Iterator iter = l.iterator(); iter.hasNext();) {
 									Proxy proxy = (Proxy) iter.next();
@@ -301,6 +320,20 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 		//CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
 		//CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
 		cbUsingSystemProxy = new CheckboxMenuItem("使用系统代理");
+		cbRegistHook = new CheckboxMenuItem("启用");
+		cbRegistHook.addItemListener(new ItemListener() {
+			
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if(e.getStateChange()==ItemEvent.SELECTED){
+					registHook();
+				}else {
+					unRegistHook();
+				}
+				
+			}
+		});
+		
 		/*Menu displayMenu = new Menu("Display");
 		MenuItem errorItem = new MenuItem("Error");
 		MenuItem warningItem = new MenuItem("Warning");
@@ -314,6 +347,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 		//popup.add(cb1);
 		//popup.add(cb2);
 		popup.add(cbUsingSystemProxy);
+		popup.add(cbRegistHook);
 		popup.addSeparator();
 		/*popup.add(displayMenu);
 		displayMenu.add(errorItem);
@@ -418,19 +452,8 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 			}
 		});
 
-
-		cbUsingSystemProxy.addItemListener(new ItemListener() {
-
-			public void itemStateChanged(ItemEvent e) {
-				int cb1Id = e.getStateChange();
-				if (cb1Id == ItemEvent.SELECTED) {
-					Cc.usingSystemProxy = true;
-				} else {
-					Cc.usingSystemProxy = false;
-				}
-			}
-		});
 		cbUsingSystemProxy.setState(true);
+
 		
 		trayIcon.setImageAutoSize(true);
 		trayIcon.setToolTip("CC Translate");

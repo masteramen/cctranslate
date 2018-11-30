@@ -51,10 +51,10 @@ class AsDesktop extends JWindow implements INotify {
 
         setAlwaysOnTop(true);
 
-        final Dimension preferredSize = new Dimension(WIDTH, HEIGHT);
-        setPreferredSize(preferredSize);
-        setMaximumSize(preferredSize);
-        setMinimumSize(preferredSize);
+       // final Dimension preferredSize = new Dimension(WIDTH, HEIGHT);
+        //setPreferredSize(preferredSize);
+        //setMaximumSize(preferredSize);
+        //setMinimumSize(preferredSize);
         
             
        // setSize(NotifyCanvas.WIDTH, NotifyCanvas.HEIGHT);
