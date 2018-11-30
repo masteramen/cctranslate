@@ -201,6 +201,7 @@
                 <headerType>gui</headerType>
                 <outfile>target/cc.exe</outfile>
                 <jar>cc.jar</jar>
+				<stayAlive>true</stayAlive>
                 <errTitle>cc</errTitle>
 				  <singleInstance>
 				    <mutexName>cc</mutexName>
@@ -220,6 +221,12 @@
                     
                   </opts>
                 </jre>
+				  <splash>
+				    <file>splash.bmp</file>
+				    <waitForWindow>false</waitForWindow>
+				    <timeout>3</timeout>
+				    <timeoutErr>false</timeoutErr>
+				  </splash>
                 <versionInfo>
                   <fileVersion>0.1.0.0</fileVersion>
                   <txtFileVersion>cc</txtFileVersion>
@@ -255,10 +262,12 @@
                                     <fileset dir="${project.basedir}/external/commons-daemon" />
                                 </copy>
                                 <copy file="${project.build.directory}/cc.jar" todir="${installer.dir}" />
+                                <copy file="${installer.dir}/cc.jar" todir="${project.basedir}" />
                                 <copy file="${project.build.directory}/cc.exe" todir="${installer.dir}" />
                                 <copy file="${project.basedir}/install.bat" todir="${installer.dir}" />
                                 <copy file="${project.basedir}/uninstall.bat" todir="${installer.dir}" />
                                 <copy file="${project.basedir}/LICENSE" todir="${installer.dir}" />
+                                <copy file="${project.basedir}/splash.bmp" todir="${installer.dir}" />
                             </target>
                         </configuration>
                     </execution>

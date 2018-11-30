@@ -3,6 +3,8 @@ package org.ligboy.translate;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import cc.translate.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,12 @@ public class TokenGenerator {
      * @return The token
      */
     public String token(@NonNls String text) {
+    	try {
+			return Utils.getTk(text,mTokenKey);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         String[] d = mTokenKey.split("\\.");
         long b = Integer.valueOf(d[0]);
         List<Integer> e = new ArrayList<Integer>();

@@ -98,7 +98,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 	}
 
 	public void nativeKeyReleased(NativeKeyEvent e) {
-
+		System.out.println(e);
 		if (e.getKeyCode() == NativeKeyEvent.VC_CONTROL || e.getKeyCode() == NativeKeyEvent.VC_META) {
 			this.ctrlKeyDown = false;
 		}
@@ -212,8 +212,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 		});
 	}
 
-	public static String translate(String raw) throws RetrieveTokenKeyFailedException, TranslateFailedException,
-			IllegalTokenKeyException, URISyntaxException {
+	public static String translate(String raw) throws  TranslateFailedException, IllegalTokenKeyException, RetrieveTokenKeyFailedException {
 		final Translate translate = new Translate.Builder().logLevel(Translate.LogLevel.HEADERS)
 				.proxySelector(new ProxySelector() {
 
@@ -282,7 +281,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 		final TrayIcon trayIcon = new TrayIcon(createImage("/cc.gif", "CC Translate"));
 		final SystemTray tray = SystemTray.getSystemTray();
 		
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+/*        Runtime.getRuntime().addShutdownHook(new Thread() {
 
             public void run() {
                 try {
@@ -295,7 +294,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
 
 		// Create a popup menu components
 		MenuItem aboutItem = new MenuItem("关于cc translate");
