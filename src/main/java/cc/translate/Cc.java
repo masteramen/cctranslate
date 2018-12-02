@@ -55,7 +55,6 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 	private static CheckboxMenuItem cbRegistHook;
 	private boolean ctrlKeyDown = false;
 	private int cCount = 0;
-	private Thread unThread;
 	private int unregisterNativeHook=0;
 	
 	private static Cc instance = null;
@@ -340,6 +339,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 		final TrayIcon trayIcon = new TrayIcon(createImage("/cc.gif", "CC Translate"));
 		final SystemTray tray = SystemTray.getSystemTray();
 		
+		
 /*        Runtime.getRuntime().addShutdownHook(new Thread() {
 
             public void run() {
@@ -537,6 +537,8 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 				System.exit(0);
 			}
 		});
+		trayIcon.displayMessage("CC翻译", "CC翻译已经可以使用。", TrayIcon.MessageType.INFO);
+
 	}
 
 	// Obtain the image URL
