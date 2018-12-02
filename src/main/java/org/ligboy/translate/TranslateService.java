@@ -2,6 +2,8 @@ package org.ligboy.translate;
 
 import org.ligboy.translate.model.TokenKey;
 import org.ligboy.translate.model.TranslateResult;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -9,6 +11,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 
 /**
  * Translate API Service
@@ -34,4 +37,17 @@ interface TranslateService {
     @FormUrlEncoded
     Call<TranslateResult> translate(@Query("sl") String sourceLanguage, @Query("tl") String targetLanguage,
                                     @Field("q") String keywords, @Query("tk") String token);
+    
+    @Streaming
+    @Headers({
+        "user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 "
+                + "Safari/537.37",
+        "referer: https://translate.google.cn/?hl=zh-CN&tab=wT",
+        "authority: translate.google.cn"
+        })
+    
+
+    @GET("/translate_tts?ie=UTF-8&tl=en&total=1&idx=0&client=t")
+    Call<ResponseBody> audio(
+    		@Query("q") String keywords, @Query("tk") String token,@Query("textlen")Integer textlen);
 }

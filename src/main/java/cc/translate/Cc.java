@@ -47,6 +47,8 @@ import org.ligboy.translate.exception.RetrieveTokenKeyFailedException;
 import org.ligboy.translate.exception.TranslateFailedException;
 import org.ligboy.translate.model.TranslateResult;
 
+import javazoom.jl.decoder.JavaLayerException;
+
 public class Cc implements NativeKeyListener,NativeMouseInputListener{
 	private static ProxySelector defaultProxySelector;
 	private static CheckboxMenuItem cbUsingSystemProxy;
@@ -54,7 +56,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 	private boolean ctrlKeyDown = false;
 	private int cCount = 0;
 	private Thread unThread;
-	private boolean unregisterNativeHook;
+	private int unregisterNativeHook=0;
 	
 	private static Cc instance = null;
 	
@@ -71,30 +73,44 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 			this.ctrlKeyDown = true;
 		} 
 		if(System.getProperty("os.name").toLowerCase().indexOf("mac")>-1) {
-			this.unregisterNativeHook = true;
-			if(this.unThread == null) {
-				this.unThread = new Thread(new Runnable() {
-					
-					@Override
-					public void run() {
-						try {
-							while(true) {
-								do {
-									if(!unregisterNativeHook)continue;
-									unregisterNativeHook=false;
-									Thread.sleep(5000);
-								}while(unregisterNativeHook);
-								registHook();
-							}
-						}
-						catch (Exception e) {
-							e.printStackTrace();
-						}
+			
+			synchronized (this) {
+				if(this.unregisterNativeHook<=0) {
+					this.unregisterNativeHook = 1;
+					 new Thread(new Runnable() {
+							
+							@Override
+							public void run() {
+								try {
+									int tmp = 0;
+										do {
+											System.out.println("unregisterNativeHook:"+unregisterNativeHook);
+											tmp = unregisterNativeHook;
+											Thread.sleep(10000);
+										}while(unregisterNativeHook>tmp);
+										unRegistHook();
+										registHook();
+										synchronized (Cc.this) {
+											unregisterNativeHook = 0;
+										}
+									
+								}
+								catch (Exception e) {
+									e.printStackTrace();
+								}
 
-					}
-				});
-				this.unThread.start();
+							}
+						}).start();
+				}else {
+					this.unregisterNativeHook+=1;
+				}
+
+				
 			}
+			
+
+
+		
 
 		}
 	}
@@ -106,7 +122,9 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 		if (ctrlKeyDown && "C".equals(NativeKeyEvent.getKeyText(e.getKeyCode()))) {
 			this.cCount += 1;
 
-		}else this.cCount = 0;
+		}else {
+			this.cCount = 0;
+		}
 		if (this.cCount >= 2) {
 			this.cCount = 0;
 			// System.out.println("Key Released: " +
@@ -174,6 +192,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 			System.err.println(ex.getMessage());
 
 		}
+		System.out.println("regist Hook");
 
 		
 
@@ -184,6 +203,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 			GlobalScreen.removeNativeKeyListener(Cc.getCcInstance());
 			GlobalScreen.removeNativeMouseMotionListener(Cc.getCcInstance());
 			GlobalScreen.unregisterNativeHook();
+			System.out.println("unRegist Hook");
 		} catch (NativeHookException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -232,7 +252,7 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 	}
 
 	public static String translate(String raw) throws  TranslateFailedException, IllegalTokenKeyException, RetrieveTokenKeyFailedException {
-		final Translate translate = new Translate.Builder().logLevel(Translate.LogLevel.NONE)
+		final Translate translate = new Translate.Builder().logLevel(Translate.LogLevel.HEADERS)
 				.proxySelector(new ProxySelector() {
 
 					@Override
@@ -268,8 +288,28 @@ public class Cc implements NativeKeyListener,NativeMouseInputListener{
 
 				}).build();
 
-		translate.refreshTokenKey();
 		TranslateResult result = translate.translate(raw, Translate.SOURCE_LANG_AUTO, isChinese(raw) ? "en" : "zh_CN");
+		
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						//        lyric = split.filter((s, i) => i % 2 === 0).map(x => x.match(/^\[\d+/) ? x.replace(/([a-z]+)/gi, '<span>$1</span>') : x).join('\n')
+						String[] ns = raw.replaceAll("([.?!])[\\s\\n]+", "$1\n").split("\n+");
+						for(int i=0;i<ns.length;i++) {
+							if(ns[i].trim().length()>0)
+								translate.playTextAudio(ns[i]);
+						}
+					} catch (RetrieveTokenKeyFailedException | IllegalTokenKeyException | IOException
+							| JavaLayerException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}					
+				}
+			}).start();
+			
+
 		return result.getTargetText();
 
 	}

@@ -2,6 +2,7 @@ package org.ligboy.translate;
 
 import okhttp3.Dns;
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,15 +11,21 @@ import org.ligboy.translate.exception.RetrieveTokenKeyFailedException;
 import org.ligboy.translate.exception.TranslateFailedException;
 import org.ligboy.translate.model.TokenKey;
 import org.ligboy.translate.model.TranslateResult;
+
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Proxy;
 import java.net.ProxySelector;
+import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -81,8 +88,9 @@ public class Translate {
     /**
      * Refresh the token key.
      * @throws RetrieveTokenKeyFailedException If failed throw this Exception.
+     * @throws IllegalTokenKeyException 
      */
-    public void refreshTokenKey() throws RetrieveTokenKeyFailedException {
+    public void refreshTokenKey() throws RetrieveTokenKeyFailedException, IllegalTokenKeyException {
         Call<TokenKey> tokenKeyCall = mService.getTokenKey();
         Response<TokenKey> keyResponse;
         try {
@@ -96,6 +104,25 @@ public class Translate {
         } else {
             throw new RetrieveTokenKeyFailedException("Refresh token key failed.");
         }
+        
+        if (mTokenGenerator == null || mTokenGenerator.getTokenKey() == null) {
+            throw new IllegalTokenKeyException("token key == null");
+        }
+    }
+    
+    public InputStream getAuidoUrl(String text) throws RetrieveTokenKeyFailedException, IllegalTokenKeyException, IOException {
+		refreshTokenKey();
+        Call<ResponseBody> response = mService.audio(text, mTokenGenerator.token(text),text.length());
+       return  response.execute().body().byteStream();
+
+    }
+    
+    public void playTextAudio(String text) throws RetrieveTokenKeyFailedException, IllegalTokenKeyException, IOException, JavaLayerException
+    {
+    	InputStream is = getAuidoUrl(text);
+        BufferedInputStream buffer = new BufferedInputStream(is);
+        Player player = new Player(buffer);
+        player.play();
     }
 
     /**
@@ -106,13 +133,15 @@ public class Translate {
      * @return The translated result.
      * @throws TranslateFailedException exception if translation requesting encountered errors.
      * @throws IllegalTokenKeyException exception if there something wrong with the token key.
+     * @throws RetrieveTokenKeyFailedException 
      */
     @Nullable
     public TranslateResult translate(@NotNull String text, @Nullable String source, @NotNull String target)
-                        throws TranslateFailedException, IllegalTokenKeyException {
-        if (mTokenGenerator == null || mTokenGenerator.getTokenKey() == null) {
-            throw new IllegalTokenKeyException("token key == null");
-        }
+                        throws TranslateFailedException, IllegalTokenKeyException, RetrieveTokenKeyFailedException {
+    	
+		refreshTokenKey();
+
+
         if (source == null) {
             source = Translate.SOURCE_LANG_AUTO;
         }

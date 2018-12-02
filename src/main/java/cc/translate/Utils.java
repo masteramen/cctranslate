@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.swing.SwingUtilities;
 
 import dorkbox.notify.Notify;
 import dorkbox.notify.Pos;
@@ -59,9 +60,14 @@ public class Utils {
 					e.printStackTrace();
 					 result = "error!";
 				}
+				System.out.println(result);
 				notify.text(result).title("翻译完毕");
 
-				notify.updateUI();
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						notify.updateUI();
+					}
+				});
 			}
 		}).start();
 
@@ -95,4 +101,5 @@ public class Utils {
 		// call function from script file
 		return inv.invokeFunction("calcHash", text,token).toString();
 	}
+	
 }
