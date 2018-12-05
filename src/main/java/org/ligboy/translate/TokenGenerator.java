@@ -16,6 +16,7 @@ import java.util.List;
 public class TokenGenerator {
 
     private String mTokenKey = "406249.3075489964";
+	private long mTokenKeyTime;
     private static final String SB = "+-a^+6";
     private static final String ZB = "+-3^+b+-f";
 
@@ -24,6 +25,7 @@ public class TokenGenerator {
      */
     public TokenGenerator(@NonNls String tokenKey) {
         mTokenKey = tokenKey;
+        mTokenKeyTime = System.currentTimeMillis();
     }
 
     private long qM(long a, String b) {
@@ -107,4 +109,8 @@ public class TokenGenerator {
         mTokenKey = tokenKey;
         return this;
     }
+
+	public boolean isValid() {
+		return System.currentTimeMillis() - mTokenKeyTime < 1000*60*15;
+	}
 }

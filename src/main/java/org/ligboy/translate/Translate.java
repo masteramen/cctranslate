@@ -39,7 +39,7 @@ public class Translate {
 
     private static final String DEFAULT_BASE_URL = "https://translate.google.cn";
 
-    TokenGenerator mTokenGenerator;
+    private static TokenGenerator mTokenGenerator;
     private TranslateService mService;
 
     Translate(Builder builder) {
@@ -82,7 +82,7 @@ public class Translate {
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(builder.baseUrl == null ? DEFAULT_BASE_URL : builder.baseUrl);
         mService = retrofitBuilder.build().create(TranslateService.class);
-        this.mTokenGenerator = builder.tokenGenerator;
+        //this.mTokenGenerator = builder.tokenGenerator;
     }
 
     /**
@@ -91,7 +91,9 @@ public class Translate {
      * @throws IllegalTokenKeyException 
      */
     public void refreshTokenKey() throws RetrieveTokenKeyFailedException, IllegalTokenKeyException {
-        Call<TokenKey> tokenKeyCall = mService.getTokenKey();
+         if(mTokenGenerator!=null && mTokenGenerator.isValid())return; 
+    	
+    	Call<TokenKey> tokenKeyCall = mService.getTokenKey();
         Response<TokenKey> keyResponse;
         try {
             keyResponse = tokenKeyCall.execute();

@@ -226,17 +226,11 @@
                     
                   </opts>
                 </jre>
-				  <splash>
-				    <file>splash.bmp</file>
-				    <waitForWindow>false</waitForWindow>
-				    <timeout>3</timeout>
-				    <timeoutErr>false</timeoutErr>
-				  </splash>
-                <versionInfo>
+				<versionInfo>
                   <fileVersion>0.1.0.0</fileVersion>
                   <txtFileVersion>cc</txtFileVersion>
                   <fileDescription>cc</fileDescription>
-                  <copyright>Testing</copyright>
+                  <copyright>CC Translate</copyright>
                   <productVersion>0.1.0.0</productVersion>
                   <txtProductVersion>0.1</txtProductVersion>
                   <productName>cc</productName>
