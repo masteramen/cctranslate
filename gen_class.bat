@@ -1,0 +1,1 @@
+"external/jre1.8.0_181/bin/java" -verbose:class -jar target/cc.jar > target/installer/source_class.txt
