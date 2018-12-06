@@ -23,12 +23,7 @@
         </repository>
  
 </repositories>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.0.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
+
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,32 +33,7 @@
    		<swt.version>4.6</swt.version>
 
 	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
+		<dependencies>
 <!-- 		<dependency>
 			<groupId>org.ligboy.library</groupId>
 			<artifactId>google-translate</artifactId>
@@ -137,12 +107,6 @@
     <artifactId>jlayer</artifactId>
     <version>1.0.1</version>
 </dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
 
 	</dependencies>
 
@@ -226,12 +190,7 @@
                     
                   </opts>
                 </jre>
-				  <splash>
-				    <file>splash.bmp</file>
-				    <waitForWindow>false</waitForWindow>
-				    <timeout>3</timeout>
-				    <timeoutErr>false</timeoutErr>
-				  </splash>
+
                 <versionInfo>
                   <fileVersion>0.1.0.0</fileVersion>
                   <txtFileVersion>cc</txtFileVersion>
@@ -247,10 +206,37 @@
             </execution>
           </executions>
         </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>ant-magic</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <property name="compile_classpath"   refid="maven.compile.classpath"/>
+                <property name="outputDir" value="${project.build.outputDirectory}"/>
+                <property name="sourceDir" value="${project.build.sourceDirectory}"/>
+                <property name="compile_classpath" refid="maven.compile.classpath"/>
+                <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                <property name="test_classpath" refid="maven.test.classpath"/>
+                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
+                <property name="installer.dir" value="${installer.dir}"/> 
+                <property name="project.basedir" value="${project.basedir}"/> 
+                          
+                <ant antfile="${basedir}/build.xml"
+                     target="mini-jre"/>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
                 <executions>
                     <execution>
                         <id>default-cli</id>
@@ -260,19 +246,18 @@
                         </goals>
                         <configuration>
                             <target>
-                                <copy todir="${installer.dir}/jre">
-                                    <fileset dir="${project.basedir}/external/jre1.8.0_181" />
-                                </copy>
+
+
                                 <copy todir="${installer.dir}/commons-daemon">
                                     <fileset dir="${project.basedir}/external/commons-daemon" />
                                 </copy>
                                 <copy file="${project.build.directory}/cc.jar" todir="${installer.dir}" />
-                                <copy file="${installer.dir}/cc.jar" todir="${project.basedir}" />
-                                <copy file="${project.build.directory}/cc.exe" todir="${installer.dir}" />
+						        <copy file="${project.build.directory}/cc.exe" todir="${installer.dir}" />
+
+                                <copy file="${project.basedir}/test.bat" todir="${installer.dir}" />
                                 <copy file="${project.basedir}/install.bat" todir="${installer.dir}" />
                                 <copy file="${project.basedir}/uninstall.bat" todir="${installer.dir}" />
                                 <copy file="${project.basedir}/LICENSE" todir="${installer.dir}" />
-                                <copy file="${project.basedir}/splash.bmp" todir="${installer.dir}" />
                             </target>
                         </configuration>
                     </execution>
