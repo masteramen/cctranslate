@@ -47,7 +47,7 @@ interface TranslateService {
         })
     
 
-    @GET("/translate_tts?ie=UTF-8&tl=en&total=1&idx=0&client=t")
+    @GET("/translate_tts?ie=UTF-8&total=1&idx=0&client=t")
     Call<ResponseBody> audio(
-    		@Query("q") String keywords, @Query("tk") String token,@Query("textlen")Integer textlen);
+    		@Query("q") String keywords, @Query("tk") String token,@Query("textlen")Integer textlen,@Query("tl") String tl);
 }

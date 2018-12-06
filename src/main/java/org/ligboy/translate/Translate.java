@@ -112,16 +112,16 @@ public class Translate {
         }
     }
     
-    public InputStream getAuidoUrl(String text) throws RetrieveTokenKeyFailedException, IllegalTokenKeyException, IOException {
+    public InputStream getAuidoUrl(String text,String tl) throws RetrieveTokenKeyFailedException, IllegalTokenKeyException, IOException {
 		refreshTokenKey();
-        Call<ResponseBody> response = mService.audio(text, mTokenGenerator.token(text),text.length());
+        Call<ResponseBody> response = mService.audio(text, mTokenGenerator.token(text),text.length(),tl);
        return  response.execute().body().byteStream();
 
     }
     
-    public void playTextAudio(String text) throws RetrieveTokenKeyFailedException, IllegalTokenKeyException, IOException, JavaLayerException
+    public void playTextAudio(String text,String tl) throws RetrieveTokenKeyFailedException, IllegalTokenKeyException, IOException, JavaLayerException
     {
-    	InputStream is = getAuidoUrl(text);
+    	InputStream is = getAuidoUrl(text,tl);
         BufferedInputStream buffer = new BufferedInputStream(is);
         Player player = new Player(buffer);
         player.play();

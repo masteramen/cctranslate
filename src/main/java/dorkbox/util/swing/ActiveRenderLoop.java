@@ -57,7 +57,7 @@ class ActiveRenderLoop implements Runnable {
             long now = System.nanoTime();
             long updateDeltaNanos = now - lastTime;
             lastTime = now;
-
+            System.out.println(now);
             // not synchronized, because we don't care. The worst case, is one frame of animation behind.
             for (int i = 0; i < SwingActiveRender.activeRenderEvents.size(); i++) {
                 ActionHandlerLong actionHandlerLong = SwingActiveRender.activeRenderEvents.get(i);
