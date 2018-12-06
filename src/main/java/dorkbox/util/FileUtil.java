@@ -33,8 +33,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  * File related utilities.
@@ -47,6 +46,57 @@ import org.slf4j.LoggerFactory;
  * Peter Donald, Jeff Turner, Matthew Hawthorne, Martin Cooper,
  * Jeremias Maerki, Stephen Colebourne
  */
+class Logger{
+
+	public boolean isTraceEnabled() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void trace(String string, File file2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void warn(String string) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void trace(String string, File in, File out) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void warn(String string, File temp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void warn(String string, File source, File dest) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void trace(String string, String path) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void warn(String string, File source, File dest, IOException ioe) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}
+class LoggerFactory{
+
+	public static Logger getLogger(Class<FileUtil> class1) {
+		// TODO Auto-generated method stub
+		return new Logger();
+	}
+	
+}
 @SuppressWarnings({"WeakerAccess", "Duplicates", "unused"})
 public
 class FileUtil {

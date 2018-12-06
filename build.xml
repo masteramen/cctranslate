@@ -4,27 +4,32 @@
 	
 	<property name="jre.destdir" value="${installer.dir}/jre" />
 	<property name="jre.orgdir" value="${project.basedir}/external/jre1.8.0_181" />
-
-	<target name="mini-jre">
+	<fileset dir="${installer.dir}/org_rt.jar" id="org_rt"/> 
+	<target name="org_rt.fileset.check"> 
+		<mkdir dir="${installer.dir}/org_rt.jar"/>
+	    <pathconvert refid="org_rt" property="fileset.notempty" 
+	setonempty="false"/>
+	</target> 
+	<!-- depends="org_rt.fileset.check" if="fileset.nonempty" -->
+	<target name="unzipRt" depends="org_rt.fileset.check" if="fileset.nonempty"> 
+		<unzip src="${jre.orgdir}/lib/rt.jar" dest="${installer.dir}/org_rt.jar"/>
+		<unzip src="${jre.orgdir}/lib/resources.jar" dest="${installer.dir}/org_resources.jar"/>
+		<unzip src="${jre.orgdir}/lib/charsets.jar" dest="${installer.dir}/org_charsets.jar"/>
+		<unzip src="${jre.orgdir}/lib/jce.jar" dest="${installer.dir}/org_jce.jar"/>
+		<unzip src="${project.basedir}/target/cc.jar" dest="${installer.dir}/org_cc.jar"/>
+	</target> 	
+	<target name="mini-jre" depends="unzipRt">
 	      <echo message="test classpath:    ${test_classpath}"/>
 	      <echo message="outputDir:    ${outputDir}"/>
 	      <echo message="sourceDir:    ${sourceDir}"/>
 	      <echo message="installer.dir:    ${installer.dir}"/>
-		  <unzip src="${jre.orgdir}/lib/rt.jar" dest="${installer.dir}/org_rt"/>
+		  
 
 		<mkdir dir="${installer.dir}/new_rt" />
-		<java classname="cc.translate.MinJre" fork="false"  failonerror="true">
-			  <arg value="${installer.dir}/org_rt"/>
-			  <arg value="${installer.dir}/new_rt"/>
-		  <classpath>
-		    <pathelement location="${test_classpath}"/>
-		    <pathelement path="${test_classpath}"/>
-		    <pathelement path="${java.class.path}"/>
-		  </classpath>
-		</java>
+
 		<mkdir dir="${jre.destdir}" />
 
-		<jar destfile="${jre.destdir}/lib/rt.jar" basedir="${installer.dir}/new_rt"/>
+		
 		<copy todir="${jre.destdir}">
 		  <fileset dir="${jre.orgdir}" >
 		  	<include name="bin/awt.dll" />
@@ -70,7 +75,24 @@
 		  	<include name="lib/tzdb.dat" />
 		   </fileset>
 		</copy>
-
+		<java classname="cc.translate.MinJre2" fork="false"  failonerror="true">
+			  <!-- <arg value="${jre.orgdir}/lib/rt.jar"/>
+			  <arg value="${jre.destdir}/lib/rt.jar"/>
+			  <arg value="${jre.orgdir}/lib/resources.jar"/>
+			  <arg value="${jre.destdir}/lib/resources.jar"/>
+			  <arg value="${jre.orgdir}/lib/charsets.jar"/>
+			  <arg value="${jre.destdir}/lib/charsets.jar"/>
+			  <arg value="${jre.orgdir}/lib/jce.jar"/>
+			  <arg value="${jre.orgdir}/lib/jce.jar"/> -->
+			  <arg value="${project.basedir}/target/cc.jar"/>
+			  <arg value="${installer.dir}/cc.jar"/>
+		  <classpath>
+		    <pathelement location="${test_classpath}"/>
+		    <pathelement path="${test_classpath}"/>
+		    <pathelement path="${java.class.path}"/>
+		  </classpath>
+		</java>
+		
 	</target>
 	
 
