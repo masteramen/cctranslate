@@ -13,27 +13,56 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.net.ssl.SSLKeyException;
 public class MinJre2 {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		
+		if(args == null ||args.length==0){
+			args=new String[]{
+					"C:\\Program Files\\Java\\jdk1.8.0_131\\bin\\jar",
+					"D:\\Users\\pwcraradmin\\git\\cc\\target\\installer\\repack",
+					"D:\\Users\\pwcraradmin\\git\\cc\\external\\jre1.8.0_181",
+					"D:\\Users\\pwcraradmin\\git\\cc\\target\\installer\\jre",
+					"D:\\Users\\pwcraradmin\\git\\cc\\target\\cc.jar",
+					
+					"D:\\Users\\pwcraradmin\\git\\cc\\external\\jre1.8.0_181\\lib\\rt.jar",
+					"D:\\Users\\pwcraradmin\\git\\cc\\target\\installer\\jre\\lib\\rt.jar"
+					//"D:\\Users\\pwcraradmin\\git\\cc\\external\\jre1.8.0_181\\lib\\resources.jar",
+					//"D:\\Users\\pwcraradmin\\git\\cc\\target\\installer\\jre\\lib\\resources.jar",
+//					"D:\\Users\\pwcraradmin\\git\\cc\\external\\jre1.8.0_181\\lib\\charsets.jar",
+//					"D:\\Users\\pwcraradmin\\git\\cc\\target\\installer\\jre\\lib\\charsets.jar",
+//					"D:\\Users\\pwcraradmin\\git\\cc\\external\\jre1.8.0_181\\lib\\jce.jar",
+//					"D:\\Users\\pwcraradmin\\git\\cc\\target\\installer\\jre\\lib\\jce.jar",
+//					"D:\\Users\\pwcraradmin\\git\\cc\\target\\cc.jar",
+//					"D:\\Users\\pwcraradmin\\git\\cc\\target\\installer\\cc.jar"
+			};
+		}
+
+		
+		String repackLocation=args[1];//"git\\cc\\target\\installer";//args[0];
+		String externalJre=args[2];//"git\\cc\\external\\jre1.8.0_181";//args[1];
+		String minJre = args[3];//installLocation+"\\jre";  //args[1];
+		String targetJarFile=args[4];//"git\\cc\\target\\cc.jar";//args[2];
+		String exeJar=args[0];//"C:\\Program Files\\Java\\jdk1.8.0_131\\bin\\jar";
+		
+		/*List<String> argList = Arrays.asList(args).stream().map(i->"\""+i.replaceAll(Pattern.quote("\\"), "/").replaceAll("/", File.separator+File.separator)+"\"").collect(Collectors.toList());
+		System.out.println(String.join(",\n", argList));
+		if(true)System.exit(0);*/
 		
 		
-		String installLocation="git\\cc\\target\\installer";//args[0];
-		String externalJre="git\\cc\\external\\jre1.8.0_181";//args[1];
-		String minJre = installLocation+"\\jre";  //args[1];
-		String targetJarFile="git\\cc\\target\\cc.jar";//args[2];
-		String exeJar="C:\\Program Files\\Java\\jdk1.8.0_131\\bin\\jar";
-		
-		
-		String destJarFile = installLocation+File.separator+"jre"+File.separator+"lib"+File.separator+"charsets.jar";
-		String srcJarFile = externalJre+File.separator+File.separator+"lib"+File.separator+"charsets.jar";
-		for(int i=0,j=args.length/2;i<j;i++){
-			srcJarFile = args[2*i];
-			destJarFile = args[2*i+1];
-			minJar(installLocation, externalJre, minJre, targetJarFile, exeJar, destJarFile, srcJarFile);
+		String destJarFile = null;//repackLocation+File.separator+"jre"+File.separator+"lib"+File.separator+"charsets.jar";
+		String srcJarFile = null;//externalJre+File.separator+File.separator+"lib"+File.separator+"charsets.jar";
+		for(int i=0,j=(args.length-5)/2;i<j;i++){
+			srcJarFile = args[5+2*i];
+			destJarFile = args[5+2*i+1];
+			minJar(repackLocation, externalJre, minJre, targetJarFile, exeJar, destJarFile, srcJarFile);
 
 			
 		}
@@ -76,7 +105,7 @@ public class MinJre2 {
 		String minRtFolder = installLocation+File.separator+"new_"+jarFileName;
 		String orgRtFolder = installLocation+File.separator+"org_"+jarFileName;
 
-		match("glob:**/*.{so,dll,dylib}", orgRtFolder,minRtFolder);
+		match("glob:**/*.{so,dll,dylib,js,gif,jpg}", orgRtFolder,minRtFolder);
 
 		
         String content=null;
@@ -84,7 +113,7 @@ public class MinJre2 {
         content=runCmd(new String[]{externalJre+File.separator+"bin"+File.separator+"java","-verbose:class","-jar",targetJarFile});
 
 		copyFileByAnalyzeContent(orgRtFolder,minRtFolder,content);
-		runCmd(new String[]{exeJar,"-cf",destJarFile,"-C",minRtFolder,"." });
+		//runCmd(new String[]{exeJar,"-cf",destJarFile,"-C",minRtFolder,"." });
 
 		
 		//if(true)System.exit(0);
@@ -93,7 +122,8 @@ public class MinJre2 {
 		do{
 			try {
 				
-				
+				 hasErr = false;
+
 				runCmd(new String[]{exeJar,"-cf",destJarFile,"-C",minRtFolder,"." });
 
 				content = runCmd(new String[]{minJre+File.separator+"bin"+File.separator+"java","-verbose:class","-jar",targetJarFile});
@@ -104,8 +134,7 @@ public class MinJre2 {
 					String pkgCls = null;
 					String line = lines[i];
 					if(line.contains("java.lang.NoClassDefFoundError:")){
-						String temps[] = line.trim().split("\\s+");
-						pkgCls = temps[1];
+						pkgCls = line.trim().split(Pattern.quote("java.lang.NoClassDefFoundError:"))[1].trim().split("\\s+")[0];
 					}else if(line.contains("Caused by: java.util.MissingResourceException: Can't find bundle for base name")){
 						String temps[] = line.trim().split("\\s+");
 						pkgCls = "sun.launcher.resources.launcher";
@@ -116,8 +145,10 @@ public class MinJre2 {
 			    		hasErr = true;
 			    		break;
 					}
+					
 
 				}
+				//if(content.contains("Exception in thread"))System.exit(1);
 
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -148,7 +179,7 @@ public class MinJre2 {
 		if(new File(orgClassFile).isFile()){
     		new File(newClassFile).getParentFile().mkdirs();
     		Files.copy(new File(orgClassFile).toPath(), new File(newClassFile).toPath(),StandardCopyOption.REPLACE_EXISTING);
-    		
+    		System.out.println("COPY "+ orgClassFile+ "=> "+ newClassFile);
     		File[] files = new File(orgClassFile).getParentFile().listFiles();
     		String tmps[] = f.split(Pattern.quote(File.separator));
     		String fileName = tmps[tmps.length-1];
@@ -183,7 +214,8 @@ public class MinJre2 {
 		BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
 		String line;
 		while ((line = in.readLine()) != null) {
-		    System.out.println(line);
+			if(!line.contains("[Loaded"))
+				System.out.println(line);
 		    sb.append(line+"\n");
 		}
 		pr.waitFor();

@@ -335,14 +335,17 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 		final TrayIcon trayIcon = new TrayIcon(createImage("/cc.gif", "CC Translate"));
 		final SystemTray tray = SystemTray.getSystemTray();
 
-		/*
-		 * Runtime.getRuntime().addShutdownHook(new Thread() {
-		 * 
-		 * public void run() { try { if (SystemTray.isSupported()) { SystemTray
-		 * systemTray = SystemTray.getSystemTray(); systemTray.remove(trayIcon);
-		 * Runtime.getRuntime().halt(0); } } catch (Exception e) { e.printStackTrace();
-		 * } } });
-		 */
+		
+		  Runtime.getRuntime().addShutdownHook(new Thread() {
+		  
+		  public void run() { try { if (SystemTray.isSupported()) { SystemTray
+		  systemTray = SystemTray.getSystemTray(); systemTray.remove(trayIcon);
+		  unRegistHook();
+		  Runtime.getRuntime().halt(0); 
+		 
+		  } } catch (Exception e) { e.printStackTrace();
+		  } } });
+		 
 
 		// Create a popup menu components
 		MenuItem aboutItem = new MenuItem("关于CC翻译");

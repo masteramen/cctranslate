@@ -76,7 +76,7 @@ class TranslateConverterFactory extends Converter.Factory {
                 @Override
                 public TokenKey convert(ResponseBody value) throws IOException {
                     String body = value.string();
-                    System.out.println(body);
+                   // System.out.println(body);
                     if (!body.isEmpty()) {
                         Matcher matcher = PATTERN_TOKEN_KEY.matcher(body);
                         if (matcher.find()) {

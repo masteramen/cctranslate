@@ -4,28 +4,25 @@
 	
 	<property name="jre.destdir" value="${installer.dir}/jre" />
 	<property name="jre.orgdir" value="${project.basedir}/external/jre1.8.0_181" />
-	<fileset dir="${installer.dir}/org_rt.jar" id="org_rt"/> 
+	<fileset dir="${installer.dir}/repack/org_rt.jar" id="org_rt"/> 
+	<mkdir dir="${installer.dir}/repack/org_rt.jar"/>
+
 	<target name="org_rt.fileset.check"> 
-		<mkdir dir="${installer.dir}/org_rt.jar"/>
-	    <pathconvert refid="org_rt" property="fileset.notempty" 
-	setonempty="false"/>
+	    <pathconvert refid="org_rt" property="fileset.notempty"  setonempty="false"/>
 	</target> 
 	<!-- depends="org_rt.fileset.check" if="fileset.nonempty" -->
-	<target name="unzipRt" depends="org_rt.fileset.check" if="fileset.nonempty"> 
-		<unzip src="${jre.orgdir}/lib/rt.jar" dest="${installer.dir}/org_rt.jar"/>
-		<unzip src="${jre.orgdir}/lib/resources.jar" dest="${installer.dir}/org_resources.jar"/>
-		<unzip src="${jre.orgdir}/lib/charsets.jar" dest="${installer.dir}/org_charsets.jar"/>
-		<unzip src="${jre.orgdir}/lib/jce.jar" dest="${installer.dir}/org_jce.jar"/>
-		<unzip src="${project.basedir}/target/cc.jar" dest="${installer.dir}/org_cc.jar"/>
+	<target name="unzipRt" > 
+		<unzip src="${jre.orgdir}/lib/rt.jar" dest="${installer.dir}/repack/org_rt.jar"/>
+		<unzip src="${jre.orgdir}/lib/resources.jar" dest="${installer.dir}/repack/org_resources.jar"/>
+		<unzip src="${jre.orgdir}/lib/charsets.jar" dest="${installer.dir}/repack/org_charsets.jar"/>
+		<unzip src="${jre.orgdir}/lib/jce.jar" dest="${installer.dir}/repack/org_jce.jar"/>
+		<unzip src="${project.basedir}/target/cc.jar" dest="${installer.dir}/repack/org_cc.jar"/>
 	</target> 	
-	<target name="mini-jre" depends="unzipRt">
+	<target name="mini-jre"  >
 	      <echo message="test classpath:    ${test_classpath}"/>
 	      <echo message="outputDir:    ${outputDir}"/>
 	      <echo message="sourceDir:    ${sourceDir}"/>
 	      <echo message="installer.dir:    ${installer.dir}"/>
-		  
-
-		<mkdir dir="${installer.dir}/new_rt" />
 
 		<mkdir dir="${jre.destdir}" />
 
@@ -45,15 +42,19 @@
 		  	<include name="bin/t2k.dll" />
 		  	<include name="bin/verify.dll" />
 		  	<include name="bin/zip.dll" />
+		  	<include name="lib/rt.jar" />
 		  	<include name="lib/charsets.jar" />
 		  	<include name="lib/ext/dnsns.jar" />
 		  	<include name="lib/ext/sunec.jar" />
 		  	<include name="lib/ext/sunjce_provider.jar" />
 		  	<include name="lib/ext/sunmscapi.jar" />
 		  	<include name="lib/ext/sunpkcs11.jar" />
+		  	<include name="lib/ext/nashorn.jar" />
 		  	<include name="lib/fontconfig.bfc" />
 		  	<include name="lib/fontconfig.properties.src" />
-
+		  	<include name="lib/flavormap.properties" />
+		  	<include name="lib/tzmappings" />
+		  	
 		  	<include name="lib/fonts/LucidaSansRegular.ttf" />
 
 		  	<include name="lib/i386/jvm.cfg" />
@@ -75,24 +76,42 @@
 		  	<include name="lib/tzdb.dat" />
 		   </fileset>
 		</copy>
-		<java classname="cc.translate.MinJre2" fork="false"  failonerror="true">
-			  <!-- <arg value="${jre.orgdir}/lib/rt.jar"/>
+		<java classname="cc.translate.MinJre" fork="false"  failonerror="true">
+			  <arg value="${jar_exe}"/>
+			  <arg value="${installer.dir}/repack"/>
+			  <arg value="${jre.orgdir}"/>
+			  <arg value="${jre.destdir}"/>
+			  <arg value="${project.basedir}/target/cc.jar"/>
+			
+			  <arg value="${jre.orgdir}/lib/rt.jar"/>
 			  <arg value="${jre.destdir}/lib/rt.jar"/>
 			  <arg value="${jre.orgdir}/lib/resources.jar"/>
 			  <arg value="${jre.destdir}/lib/resources.jar"/>
 			  <arg value="${jre.orgdir}/lib/charsets.jar"/>
 			  <arg value="${jre.destdir}/lib/charsets.jar"/>
 			  <arg value="${jre.orgdir}/lib/jce.jar"/>
-			  <arg value="${jre.orgdir}/lib/jce.jar"/> -->
+			  <arg value="${jre.destdir}/lib/jce.jar"/>
+			  <!-- <arg value="${jre.orgdir}/lib/ext/sunpkcs11.jar"/> 
+			  <arg value="${jre.destdir}/lib/ext/sunpkcs11.jar"/>
+			  <arg value="${jre.orgdir}/lib/ext/sunjce_provider.jar"/> 
+			  <arg value="${jre.destdir}/lib/ext/sunjce_provider.jar"/> -->
+			
 			  <arg value="${project.basedir}/target/cc.jar"/>
 			  <arg value="${installer.dir}/cc.jar"/>
 		  <classpath>
+		    <pathelement location="${project.basedir}/target/test-classes"/>
 		    <pathelement location="${test_classpath}"/>
 		    <pathelement path="${test_classpath}"/>
 		    <pathelement path="${java.class.path}"/>
 		  </classpath>
 		</java>
-		
+        <jar jarfile="${installer.dir}/cc.jar"
+             basedir="${installer.dir}/repack/new_cc.jar">
+            <manifest>
+                <attribute name="Main-Class"
+                      value="cc.translate.Cc"/>
+            </manifest>
+        </jar>
 	</target>
 	
 
