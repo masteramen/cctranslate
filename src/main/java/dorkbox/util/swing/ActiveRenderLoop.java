@@ -21,8 +21,6 @@ import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.util.List;
 
-import javax.swing.JComponent;
-
 import dorkbox.util.ActionHandlerLong;
 import dorkbox.util.Property;
 
@@ -57,7 +55,7 @@ class ActiveRenderLoop implements Runnable {
             long now = System.nanoTime();
             long updateDeltaNanos = now - lastTime;
             lastTime = now;
-            System.out.println(now);
+            //System.out.println(now);
             // not synchronized, because we don't care. The worst case, is one frame of animation behind.
             for (int i = 0; i < SwingActiveRender.activeRenderEvents.size(); i++) {
                 ActionHandlerLong actionHandlerLong = SwingActiveRender.activeRenderEvents.get(i);

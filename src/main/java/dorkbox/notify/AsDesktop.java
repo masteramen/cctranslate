@@ -15,6 +15,7 @@
  */
 package dorkbox.notify;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -92,7 +93,8 @@ class AsDesktop extends JWindow implements INotify {
 
         notifyCanvas = new NotifyCanvas(this, notification, image, theme);
         
-
+        setBackground(new Color(0,0,0,0));
+        getContentPane().setBackground(new Color(0,0,0,0));
         getContentPane().add(notifyCanvas);
 
         setSize(notifyCanvas.getNotifySize());

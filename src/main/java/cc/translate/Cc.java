@@ -237,7 +237,7 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 		});
 	}
 
-	public static String translate(String raw)
+	public static TranslateResult translate(String raw)
 			throws TranslateFailedException, IllegalTokenKeyException, RetrieveTokenKeyFailedException {
 		final Translate translate = new Translate.Builder().logLevel(Translate.LogLevel.HEADERS)
 				.proxySelector(new ProxySelector() {
@@ -304,8 +304,7 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 				}
 			}
 		}).start();
-
-		return result.getTargetText();
+		return result;
 
 	}
 
