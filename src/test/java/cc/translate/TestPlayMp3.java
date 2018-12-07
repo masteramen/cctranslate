@@ -22,7 +22,7 @@ public static void main(String[] args) throws JavaLayerException, RetrieveTokenK
 
 	final Translate translate = new Translate.Builder().logLevel(Translate.LogLevel.NONE).build();
 
-	InputStream is = translate.getAuidoUrl("hello");
+	InputStream is = translate.getAuidoUrl("hello","en");
     
     BufferedInputStream buffer = new BufferedInputStream(is);
     Player player = new Player(buffer);

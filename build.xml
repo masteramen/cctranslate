@@ -1,0 +1,99 @@
+<project default="mini-jre"  basedir=".">
+
+	<property file="build.properties" />
+	
+	<property name="jre.destdir" value="${installer.dir}/jre" />
+	<property name="jre.orgdir" value="${project.basedir}/external/jre1.8.0_181" />
+	<fileset dir="${installer.dir}/org_rt.jar" id="org_rt"/> 
+	<target name="org_rt.fileset.check"> 
+		<mkdir dir="${installer.dir}/org_rt.jar"/>
+	    <pathconvert refid="org_rt" property="fileset.notempty" 
+	setonempty="false"/>
+	</target> 
+	<!-- depends="org_rt.fileset.check" if="fileset.nonempty" -->
+	<target name="unzipRt" depends="org_rt.fileset.check" if="fileset.nonempty"> 
+		<unzip src="${jre.orgdir}/lib/rt.jar" dest="${installer.dir}/org_rt.jar"/>
+		<unzip src="${jre.orgdir}/lib/resources.jar" dest="${installer.dir}/org_resources.jar"/>
+		<unzip src="${jre.orgdir}/lib/charsets.jar" dest="${installer.dir}/org_charsets.jar"/>
+		<unzip src="${jre.orgdir}/lib/jce.jar" dest="${installer.dir}/org_jce.jar"/>
+		<unzip src="${project.basedir}/target/cc.jar" dest="${installer.dir}/org_cc.jar"/>
+	</target> 	
+	<target name="mini-jre" depends="unzipRt">
+	      <echo message="test classpath:    ${test_classpath}"/>
+	      <echo message="outputDir:    ${outputDir}"/>
+	      <echo message="sourceDir:    ${sourceDir}"/>
+	      <echo message="installer.dir:    ${installer.dir}"/>
+		  
+
+		<mkdir dir="${installer.dir}/new_rt" />
+
+		<mkdir dir="${jre.destdir}" />
+
+		
+		<copy todir="${jre.destdir}">
+		  <fileset dir="${jre.orgdir}" >
+		  	<include name="bin/awt.dll" />
+		  	<include name="bin/client/jvm.dll" />
+		  	<include name="bin/fontmanager.dll" />
+		  	<include name="bin/java.dll" />
+		  	<include name="bin/java.exe" />
+		  	<include name="bin/msvcr100.dll" />
+		  	<include name="bin/net.dll" />
+		  	<include name="bin/nio.dll" />
+		  	<include name="bin/sunec.dll" />
+		  	<include name="bin/sunmscapi.dll" />
+		  	<include name="bin/t2k.dll" />
+		  	<include name="bin/verify.dll" />
+		  	<include name="bin/zip.dll" />
+		  	<include name="lib/charsets.jar" />
+		  	<include name="lib/ext/dnsns.jar" />
+		  	<include name="lib/ext/sunec.jar" />
+		  	<include name="lib/ext/sunjce_provider.jar" />
+		  	<include name="lib/ext/sunmscapi.jar" />
+		  	<include name="lib/ext/sunpkcs11.jar" />
+		  	<include name="lib/fontconfig.bfc" />
+		  	<include name="lib/fontconfig.properties.src" />
+
+		  	<include name="lib/fonts/LucidaSansRegular.ttf" />
+
+		  	<include name="lib/i386/jvm.cfg" />
+		  	<include name="lib/jce.jar" />
+		  	<include name="lib/jsse.jar" />
+		  	<include name="lib/resources.jar" />
+		  	<include name="lib/rt.jar" />
+		  	<include name="lib/security/blacklist" />
+		  	<include name="lib/security/blacklisted.certs" />
+		  	<include name="lib/security/cacerts" />
+		  	<include name="lib/security/java.policy" />
+		  	<include name="lib/security/java.security" />
+		  	<include name="lib/security/javaws.policy" />
+		  	<include name="lib/security/policy/limited/local_policy.jar" />
+		  	<include name="lib/security/policy/limited/US_export_policy.jar" />
+		  	<include name="lib/security/policy/unlimited/local_policy.jar" />
+		  	<include name="lib/security/policy/unlimited/US_export_policy.jar" />
+		  	<include name="lib/security/trusted.libraries" />
+		  	<include name="lib/tzdb.dat" />
+		   </fileset>
+		</copy>
+		<java classname="cc.translate.MinJre2" fork="false"  failonerror="true">
+			  <!-- <arg value="${jre.orgdir}/lib/rt.jar"/>
+			  <arg value="${jre.destdir}/lib/rt.jar"/>
+			  <arg value="${jre.orgdir}/lib/resources.jar"/>
+			  <arg value="${jre.destdir}/lib/resources.jar"/>
+			  <arg value="${jre.orgdir}/lib/charsets.jar"/>
+			  <arg value="${jre.destdir}/lib/charsets.jar"/>
+			  <arg value="${jre.orgdir}/lib/jce.jar"/>
+			  <arg value="${jre.orgdir}/lib/jce.jar"/> -->
+			  <arg value="${project.basedir}/target/cc.jar"/>
+			  <arg value="${installer.dir}/cc.jar"/>
+		  <classpath>
+		    <pathelement location="${test_classpath}"/>
+		    <pathelement path="${test_classpath}"/>
+		    <pathelement path="${java.class.path}"/>
+		  </classpath>
+		</java>
+		
+	</target>
+	
+
+</project>

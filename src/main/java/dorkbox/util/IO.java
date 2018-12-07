@@ -47,14 +47,8 @@ class IO {
      */
     @SuppressWarnings("Duplicates")
     public static
-    void close(final Closeable closeable, final org.slf4j.Logger logger) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                logger.error("Error closing: {}", closeable, e);
-            }
-        }
+    void close(final Closeable closeable, Object logger) {
+
     }
 
     /**
