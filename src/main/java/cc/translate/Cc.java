@@ -7,7 +7,11 @@ import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -304,6 +308,11 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 				}
 			}
 		}).start();
+		if(Config.copyResultToClip) {
+			Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();  
+	        Transferable tText = new StringSelection(result.getTargetText());  
+	        clip.setContents(tText, null);
+		}
 		return result;
 
 	}
@@ -351,7 +360,9 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 		cbUsingSystemProxy.setState(Config.usingSystemProxy);
 		CheckboxMenuItem cbRegistHook = new CheckboxMenuItem("启用 CC快捷键");
 		cbRegistHook.setState(Config.registerHook);
-
+		
+		CheckboxMenuItem cbResultToClip = new CheckboxMenuItem("复制结果到粘贴板");
+		cbResultToClip.setState(Config.copyResultToClip);
 
 		/*
 		 * Menu displayMenu = new Menu("Display"); MenuItem errorItem = new
@@ -367,6 +378,7 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 		// popup.add(cb2);
 		popup.add(cbUsingSystemProxy);
 		popup.add(cbRegistHook);
+		popup.add(cbResultToClip);
 		
 		
 				
@@ -384,6 +396,7 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 				if(e.getSource()==cnItem) Config.playCn = e.getStateChange() == ItemEvent.SELECTED;
 				if(e.getSource()==cbRegistHook) Config.registerHook = e.getStateChange() == ItemEvent.SELECTED;
 				if(e.getSource()==cbUsingSystemProxy) Config.usingSystemProxy = e.getStateChange() == ItemEvent.SELECTED;
+				if(e.getSource()==cbResultToClip) Config.copyResultToClip = e.getStateChange() == ItemEvent.SELECTED;
 
 			}
 		};
@@ -395,6 +408,7 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 		cbUsingSystemProxy.addItemListener(cbListener);
 		enItem.addItemListener(cbListener);
 		cnItem.addItemListener(cbListener);
+		cbResultToClip.addItemListener(cbListener);
 		popup.addSeparator();
 
 		/*
