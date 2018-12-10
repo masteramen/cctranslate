@@ -144,13 +144,53 @@
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
-							<finalName>cc</finalName>
+							<finalName>${project.build.finalName}-jar-with-dependencies</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
+        <plugin>
+            <groupId>com.github.wvengen</groupId>
+            <artifactId>proguard-maven-plugin</artifactId>
+            <version>2.0.8</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals><goal>proguard</goal></goals>
+                    <configuration>
+                        <injar>${project.build.finalName}-jar-with-dependencies.jar</injar> <!-- make sure to obfuscate the jar with dependencies -->
+                        <proguardVersion>5.3.3</proguardVersion>
+                        <options>
+                            <option>-allowaccessmodification</option>
+                            <option>-dontoptimize</option>
+                            <option>-dontshrink</option>
+                            <option>-dontnote</option>
+                            <option>-dontwarn</option> <!-- added option to ignore com.sun missing classes -->
+                            <option>-keepattributes Signature</option>
+                            <option>-keep public class cc.translate.Cc { 
+      public static void main(java.lang.String[]); 
+}</option>
+                            <option>-keep class org.jnativehook.DefaultLibraryLocator</option>
+                            <option>-keep class org.jnativehook.GlobalScreen</option>
+							<option>-keep class org.jnativehook.** { *; }</option>
+							<option>-keepattributes *Annotation*</option>
+							<option>-keep class com.google.gson.stream.JsonWriter</option>
+							
+<option>-keepclassmembers class * extends java.lang.Enum {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+</option>
+                        </options>
+                        
+                        <libs>
+                            <lib>${java.home}/lib/rt.jar</lib>
+                        </libs>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
 			<!-- http://launch4j.sourceforge.net/docs.html#Configuration_file -->
 			<plugin>
 				<groupId>com.akathist.maven.plugins.launch4j</groupId>
