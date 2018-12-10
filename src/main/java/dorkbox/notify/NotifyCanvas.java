@@ -122,7 +122,7 @@ class NotifyCanvas extends Canvas {
             // at dorkbox.notify.NotifyCanvas.paint(NotifyCanvas.java:92)
 
             // redo the image
-            cachedImage = renderBackgroundInfo(notification.title, notification.text, this.theme, imageIcon);
+           // cachedImage = renderBackgroundInfo(notification.title, notification.text, this.theme, imageIcon);
 
             // try to draw again
             /*try {
@@ -193,9 +193,22 @@ class NotifyCanvas extends Canvas {
         int height = getContentHeight(theme.mainTextFont,width,notificationText);
 
         int imageHeight = height+35;
+        RenderingHints hints = new RenderingHints(
+                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        RenderingHints qualityHints = new RenderingHints(
+        		  RenderingHints.KEY_ANTIALIASING,
+        		  RenderingHints.VALUE_ANTIALIAS_ON );
+        		qualityHints.put(
+        		  RenderingHints.KEY_RENDERING,
+        		  RenderingHints.VALUE_RENDER_QUALITY );
+        		g2.setRenderingHints( qualityHints );
+                g2.setRenderingHints(hints);
+
+        
         g2.setColor(theme.panel_BG);
            // g2.fillRect(0, 0, WIDTH, imageHeight);
-            RoundRectangle2D currRec = new RoundRectangle2D.Float(0, 0, WIDTH, imageHeight, 20, 20);
+            RoundRectangle2D currRec = new RoundRectangle2D.Float(0, 0, WIDTH, imageHeight, 0, 0);
             g2.fill(currRec);
             // Draw the title text
             g2.setColor(theme.titleText_FG);

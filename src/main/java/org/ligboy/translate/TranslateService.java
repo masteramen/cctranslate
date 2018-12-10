@@ -26,7 +26,7 @@ interface TranslateService {
         })
     Call<TokenKey> getTokenKey();
 
-    @POST("/translate_a/single?client=t&hl=zh-CN&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie="
+    @POST("/translate_a/single?client=webapp&hl=zh-CN&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie="
             + "UTF-8&oe=UTF-8&getSourceText=btn&ssel=0&tsel=0&kc=1")
     @Headers({
         "user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 "

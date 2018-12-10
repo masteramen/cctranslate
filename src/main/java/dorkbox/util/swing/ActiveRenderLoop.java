@@ -21,8 +21,6 @@ import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.util.List;
 
-import javax.swing.JComponent;
-
 import dorkbox.util.ActionHandlerLong;
 import dorkbox.util.Property;
 
@@ -54,9 +52,11 @@ class ActiveRenderLoop implements Runnable {
         Graphics graphics = null;
 
         while (SwingActiveRender.hasActiveRenders) {
+        	try {
             long now = System.nanoTime();
             long updateDeltaNanos = now - lastTime;
             lastTime = now;
+            //System.out.println(now);
             // not synchronized, because we don't care. The worst case, is one frame of animation behind.
             for (int i = 0; i < SwingActiveRender.activeRenderEvents.size(); i++) {
                 ActionHandlerLong actionHandlerLong = SwingActiveRender.activeRenderEvents.get(i);
@@ -101,7 +101,7 @@ class ActiveRenderLoop implements Runnable {
             Toolkit.getDefaultToolkit()
                    .sync();
 
-            try {
+            
                 // Converted to int before the division, because IDIV is
                 // 1 order magnitude faster than LDIV (and int's work for us anyways)
                 // see: http://www.cs.nuim.ie/~jpower/Research/Papers/2008/lambert-qapl08.pdf
@@ -116,7 +116,8 @@ class ActiveRenderLoop implements Runnable {
                     // try to keep the CPU from getting slammed. We couldn't match our target FPS, so loop again
                     Thread.yield();
                 }
-            } catch (InterruptedException ignored) {
+            } catch (Exception ignored) {
+            	ignored.printStackTrace();
             }
         }
     }

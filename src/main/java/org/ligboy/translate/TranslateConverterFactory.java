@@ -76,26 +76,27 @@ class TranslateConverterFactory extends Converter.Factory {
                 @Override
                 public TokenKey convert(ResponseBody value) throws IOException {
                     String body = value.string();
-                   // System.out.println(body);
+                    //System.out.println(body);
                     if (!body.isEmpty()) {
                         Matcher matcher = PATTERN_TOKEN_KEY.matcher(body);
                         if (matcher.find()) {
                             //uses JavaScript Engine to eval the key
-                            ScriptEngine engine;
+                           /* ScriptEngine engine;
                             ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
                             //The new faster javascript engine with java 8.
                             engine = scriptEngineManager.getEngineByName("nashorn");
                             //backport to java 6
                             if (engine == null) {
                                 engine = scriptEngineManager.getEngineByName("JavaScript");
-                            }
-                            try {
-                                String key = ""+ engine.eval(matcher.group().replaceAll("[^\\d.]*", ""));
+                            }*/
+                           // try {
+                                String key = //""+ engine.eval(
+                                		matcher.group().replaceAll("[^\\d.]*", "");//);
                                 TokenKey tokenKey = new TokenKey();
                                 tokenKey.setKey(key);
                                 return tokenKey;
-                            } catch (ScriptException ignored) {
-                            }
+                            /*} catch (ScriptException ignored) {
+                            }*/
                         }
                     }
                     return null;
