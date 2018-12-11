@@ -666,7 +666,8 @@ class LookAndFeel {
 
         this.height = (int) notifyCanvas.getNotifySize().getHeight();
         //updatePopupFromMap(this);
-        this.parent.invalidate();
+        //this.parent.invalidate();
+        this.parent.repaint();
         animation.to(this, NotifyAccessor.HEIGHT, accessor, 0.2F)
         .target((float)this.height)
         .ease(TweenEquations.Linear)

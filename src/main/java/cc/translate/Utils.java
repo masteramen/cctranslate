@@ -54,9 +54,11 @@ public class Utils {
 					notify.text(result.getTargetText())
 							.title(String.format("%s > %s", "en".equals(result.getSourceLang()) ? "En" : "中文",
 									"en".equals(result.getSourceLang()) ? "中文" : "En"));
+					System.out.println("Update UI@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
+							System.out.println("Update UI********************");
 							notify.updateUI();
 						}
 					});

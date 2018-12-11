@@ -149,7 +149,7 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 		initNetWork();
 		initGUI();
 		registHook();
-
+		Utils.notify("Hello My Friends , CC translate is ready now.");
 	}
 
 	private static void initGUI() {
@@ -506,6 +506,25 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 		aboutItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "CC translate:简单易用的翻译小工具");
+				String os = System.getProperty("os.name").toLowerCase();
+				String url = "http://github.io/cctranslate";
+
+				try {
+					if (os.indexOf("win") >= 0) {
+
+						Runtime rt = Runtime.getRuntime();
+
+						rt.exec("rundll32 url.dll,FileProtocolHandler " + url);
+
+					} else if (os.indexOf("mac") >= 0) {
+
+						Runtime rt = Runtime.getRuntime();
+						rt.exec("open " + url);
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 

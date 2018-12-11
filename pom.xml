@@ -162,6 +162,10 @@
                         <injar>${project.build.finalName}-jar-with-dependencies.jar</injar> <!-- make sure to obfuscate the jar with dependencies -->
                         <proguardVersion>5.3.3</proguardVersion>
                         <options>
+							<option>-assumenosideeffects class java.io.PrintStream {
+								public void println(%);
+								public void println(**);
+								}</option>
                             <option>-allowaccessmodification</option>
                             <option>-dontoptimize</option>
                             <option>-dontshrink</option>
@@ -176,6 +180,9 @@
 							<option>-keep class org.jnativehook.** { *; }</option>
 							<option>-keepattributes *Annotation*</option>
 							<option>-keep class com.google.gson.stream.JsonWriter</option>
+							<option>-keep class javazoom.jl.**{ *;}</option>
+
+							
 							
 <option>-keepclassmembers class * extends java.lang.Enum {
     public static **[] values();
