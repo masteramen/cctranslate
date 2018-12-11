@@ -109,7 +109,7 @@
              basedir="${installer.dir}/repack/new_cc.jar">
             <manifest>
                 <attribute name="Main-Class"
-                      value="cc.translate.Cc"/>
+                      value="cc.translate.CcSplash"/>
             </manifest>
         </jar>
 	</target>

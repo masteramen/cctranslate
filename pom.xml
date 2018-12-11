@@ -138,7 +138,7 @@
 						<configuration>
 							<archive>
 								<manifest>
-									<mainClass>cc.translate.Cc</mainClass>
+									<mainClass>cc.translate.CcSplash</mainClass>
 								</manifest>
 							</archive>
 							<descriptorRefs>
@@ -172,7 +172,7 @@
                             <option>-dontnote</option>
                             <option>-dontwarn</option> <!-- added option to ignore com.sun missing classes -->
                             <option>-keepattributes Signature</option>
-                            <option>-keep public class cc.translate.Cc { 
+                            <option>-keep public class cc.translate.CcSplash { 
       public static void main(java.lang.String[]); 
 }</option>
                             <option>-keep class org.jnativehook.DefaultLibraryLocator</option>
@@ -222,7 +222,7 @@
 								<windowTitle>cc</windowTitle>
 							</singleInstance>
 							<classPath>
-								<mainClass>cc.translate.Cc</mainClass>
+								<mainClass>cc.translate.CcSplash</mainClass>
 								<addDependencies>true</addDependencies>
 								<preCp>anything</preCp>
 							</classPath>
@@ -316,7 +316,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix><!--指定classpath的前缀 -->
-							<mainClass>cc.translate.Cc</mainClass><!--指定主类的类名 -->
+							<mainClass>cc.translate.CcSplash</mainClass><!--指定主类的类名 -->
 						</manifest>
 					</archive>
 				</configuration>
