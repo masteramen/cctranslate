@@ -45,12 +45,12 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseInputListener;
-import org.ligboy.translate.Translate;
-import org.ligboy.translate.exception.IllegalTokenKeyException;
-import org.ligboy.translate.exception.RetrieveTokenKeyFailedException;
-import org.ligboy.translate.exception.TranslateFailedException;
-import org.ligboy.translate.model.TranslateResult;
 
+import cc.translate.api.Translate;
+import cc.translate.api.exception.IllegalTokenKeyException;
+import cc.translate.api.exception.RetrieveTokenKeyFailedException;
+import cc.translate.api.exception.TranslateFailedException;
+import cc.translate.api.model.TranslateResult;
 import javazoom.jl.decoder.JavaLayerException;
 
 public class Cc implements NativeKeyListener, NativeMouseInputListener {

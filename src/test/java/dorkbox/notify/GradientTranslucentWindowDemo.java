@@ -40,7 +40,7 @@ public class GradientTranslucentWindowDemo extends JWindow {
         //super("GradientTranslucentWindow");
 
         setBackground(new Color(0,0,0,0));
-        setSize(new Dimension(300,200));
+        setSize(new Dimension(300,50));
         setLocationRelativeTo(null);
         //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -54,16 +54,20 @@ public class GradientTranslucentWindowDemo extends JWindow {
 
                     Paint p =
                         new GradientPaint(0.0f, 0.0f, new Color(R, G, B, 0),
-                            0.0f, getHeight(), new Color(R, G, B, 255), true);
+                            0.0f, getHeight(), new Color(R, G, B, 12), true);
                     Graphics2D g2d = (Graphics2D)g;
                     g2d.setPaint(p);
                     g2d.fillRect(0, 0, getWidth(), getHeight());
                 }
             }
         };
-        setContentPane(panel);
+        JPanel bgPanel = new JPanel();
+        bgPanel.setBackground(Color.BLACK);
+        setContentPane(bgPanel);
         setLayout(new GridBagLayout());
-        add(new JButton("I am a Button"));
+        JLabel contentLabel = new JLabel("你好，I am a Button2");
+        contentLabel.setForeground(Color.WHITE);
+        add(contentLabel);
         setBackground(Color.BLACK);
     }
 
@@ -92,6 +96,7 @@ public class GradientTranslucentWindowDemo extends JWindow {
 
                 // Display the window.
                 gtw.setVisible(true);
+                gtw.setAlwaysOnTop(true);
             }
         });
     }

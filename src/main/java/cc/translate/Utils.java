@@ -20,11 +20,10 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.SwingUtilities;
 
-import org.ligboy.translate.model.TranslateResult;
-
-import dorkbox.notify.Notify;
-import dorkbox.notify.Pos;
-import dorkbox.util.ActionHandler;
+import cc.translate.api.model.TranslateResult;
+import cc.translate.notify.Notify;
+import cc.translate.notify.Pos;
+import cc.translate.util.ActionHandler;
 
 public class Utils {
 
@@ -102,5 +101,40 @@ public class Utils {
 		System.out.println(text + ":" + textToken + ":" + token);
 		return textToken;
 	}
+public static void main(String[] args) throws InterruptedException {
+	Notify notify = Notify.create().title("翻译...").text("HELLO").hideAfter(5000).position(Pos.TOP_RIGHT)
+			// .setScreen(0)
+			.darkStyle()
+			// .shake(1300, 4)
+			// .image(ImageIO.read(NotifyTest.class.getResource("/cc.gif")))
+			// .hideCloseButton()
+			.onAction(new ActionHandler<Notify>() {
+				@Override
+				public void handle(final Notify arg0) {
+					System.err.println("Notification 1 clicked on!");
+				}
+			});
+	notify.show();
+	Thread.sleep(2000);
+	new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+			notify.text("中文GG")
+			.title(String.format("%s > %s", "en".equals("HELLO") ? "En" : "中文",
+					"en".equals("HELLO") ? "中文" : "En"));
+	System.out.println("Update UI@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
+	SwingUtilities.invokeLater(new Runnable() {
+		public void run() {
+			System.out.println("Update UI********************");
+			notify.updateUI();
+		}
+	});
+			
+		}
+	}).start();;
+
+
+}
 }

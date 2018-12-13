@@ -210,13 +210,13 @@
 							<goal>launch4j</goal>
 						</goals>
 						<configuration>
-							<dontWrapJar>true</dontWrapJar>
-
+							<dontWrapJar>false</dontWrapJar>
 							<headerType>gui</headerType>
 							<outfile>target/cc.exe</outfile>
-							<jar>cc.jar</jar>
+							<jar>target/${project.build.finalName}-jar-with-dependencies.jar</jar>
 							<stayAlive>true</stayAlive>
 							<errTitle>cc</errTitle>
+							<icon>cc.ico</icon>
 							<singleInstance>
 								<mutexName>cc</mutexName>
 								<windowTitle>cc</windowTitle>
@@ -232,7 +232,6 @@
 								<opts>
 									<opt>-Djava.endorsed.dirs=./endorsed</opt>
 									<opt>-Dfile.encoding=GB18030</opt>
-
 								</opts>
 							</jre>
 
@@ -240,7 +239,7 @@
 								<fileVersion>0.1.0.0</fileVersion>
 								<txtFileVersion>cc</txtFileVersion>
 								<fileDescription>cc</fileDescription>
-								<copyright>Testing</copyright>
+								<copyright>Cc</copyright>
 								<productVersion>0.1.0.0</productVersion>
 								<txtProductVersion>0.1</txtProductVersion>
 								<productName>cc</productName>
@@ -251,6 +250,7 @@
 					</execution>
 				</executions>
 			</plugin>
+<!-- 
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -278,6 +278,7 @@
 					</execution>
 				</executions>
 			</plugin>
+ -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>

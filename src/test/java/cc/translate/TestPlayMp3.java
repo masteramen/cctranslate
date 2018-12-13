@@ -7,11 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.ligboy.translate.Translate;
-import org.ligboy.translate.exception.IllegalTokenKeyException;
-import org.ligboy.translate.exception.RetrieveTokenKeyFailedException;
-import org.ligboy.translate.model.TranslateResult;
-
+import cc.translate.api.Translate;
+import cc.translate.api.exception.IllegalTokenKeyException;
+import cc.translate.api.exception.RetrieveTokenKeyFailedException;
+import cc.translate.api.model.TranslateResult;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
