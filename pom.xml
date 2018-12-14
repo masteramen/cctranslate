@@ -181,6 +181,7 @@
 							<option>-keepattributes *Annotation*</option>
 							<option>-keep class com.google.gson.stream.JsonWriter</option>
 							<option>-keep class javazoom.jl.**{ *;}</option>
+							<option>-keepclassmembers class cc.translate.api.model.TranslateResult{ private &lt;fields&gt;; }</option>
 
 							
 							

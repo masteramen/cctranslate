@@ -1,5 +1,6 @@
 package cc.translate.api;
 
+import cc.translate.api.model.DictResult;
 import cc.translate.api.model.TokenKey;
 import cc.translate.api.model.TranslateResult;
 import okhttp3.ResponseBody;
@@ -9,6 +10,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Streaming;
 
@@ -49,4 +51,8 @@ interface TranslateService {
     @GET("/translate_tts?ie=UTF-8&total=1&idx=0&client=t")
     Call<ResponseBody> audio(
     		@Query("q") String keywords, @Query("tk") String token,@Query("textlen")Integer textlen,@Query("tl") String tl);
+    
+    @GET("http://www.iciba.com/{word}")
+    Call<DictResult> translateDict(
+    		@Path("word") String word);
 }

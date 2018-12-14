@@ -5,15 +5,11 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -102,7 +98,8 @@ public class Utils {
 		return textToken;
 	}
 public static void main(String[] args) throws InterruptedException {
-	Notify notify = Notify.create().title("翻译...").text("HELLO").hideAfter(5000).position(Pos.TOP_RIGHT)
+	
+	Notify notify = Notify.create().title("翻译...").text("HELLO HELLO HELLO HELLO HELLO HELLO HELLO HELLO HELLO HELLO HELLO HELLO ").hideAfter(5000).position(Pos.TOP_RIGHT)
 			// .setScreen(0)
 			.darkStyle()
 			// .shake(1300, 4)
@@ -120,7 +117,7 @@ public static void main(String[] args) throws InterruptedException {
 		
 		@Override
 		public void run() {
-			notify.text("中文GG")
+			notify.text("中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG")
 			.title(String.format("%s > %s", "en".equals("HELLO") ? "En" : "中文",
 					"en".equals("HELLO") ? "中文" : "En"));
 	System.out.println("Update UI@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");

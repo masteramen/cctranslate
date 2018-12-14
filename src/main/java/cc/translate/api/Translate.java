@@ -14,8 +14,10 @@ import cc.translate.Config;
 import cc.translate.api.exception.IllegalTokenKeyException;
 import cc.translate.api.exception.RetrieveTokenKeyFailedException;
 import cc.translate.api.exception.TranslateFailedException;
+import cc.translate.api.model.DictResult;
 import cc.translate.api.model.TokenKey;
 import cc.translate.api.model.TranslateResult;
+import cc.translate.api.model.TranslateResult.Sentence;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import retrofit2.Call;
@@ -39,6 +41,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -214,9 +218,27 @@ public class Translate {
 			
 			}else {
 				cacheFile.getParentFile().mkdirs();
-				refreshTokenKey();
-				final Call<TranslateResult> resultCall = mService.translate(source, target, text, mTokenGenerator.token(text));
-				TranslateResult result = resultCall.execute().body();
+				
+				TranslateResult result = null;
+				if(text.matches("^[a-zA-Z]+$")){
+					final Call<DictResult> resultCall = mService.translateDict(text);
+					DictResult result2 = resultCall.execute().body();
+					result = new TranslateResult();
+					List<Sentence> sentenceList = new ArrayList<Sentence>(2);
+					sentenceList.add(new Sentence());
+					sentenceList.get(0).setSourceText(text);
+					sentenceList.get(0).setTargetText(result2.getContent());
+					result.setSentences(sentenceList);
+				}
+				
+				
+				if(result==null){
+					refreshTokenKey();
+					final Call<TranslateResult> resultCall = mService.translate(source, target, text, mTokenGenerator.token(text));
+					result = resultCall.execute().body();
+				}
+
+				
 				String jsonStr = new Gson().toJson(result);
 				OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(cacheFile), StandardCharsets.UTF_8);
 				writer.write(jsonStr);
@@ -228,6 +250,7 @@ public class Translate {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+
 		refreshTokenKey();
 
 		final Call<TranslateResult> resultCall = mService.translate(source, target, text, mTokenGenerator.token(text));
@@ -239,6 +262,8 @@ public class Translate {
 		}
 	}
 
+
+	
 	/**
 	 * Get the {@link TokenGenerator}.
 	 * 

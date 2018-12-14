@@ -160,30 +160,16 @@ class NotifyCanvas extends Canvas {
     @Override
     public void update(Graphics g){
     	super.paint(g);
-    Graphics offgc;
-    Image offscreen = null;
-    Dimension d = getSize();
 
-    // create the offscreen buffer and associated Graphics
-    bufferImage = this.createImage(getWidth(), getHeight());
+    drawContent(this.notification.title, this.notification.text, theme, imageIcon, (Graphics2D) g);
 
-    offgc = bufferImage.getGraphics();
-    // clear the exposed area
-    offgc.setColor(getBackground());
-    offgc.fillRect(0, 0, d.width, d.height);
-    offgc.setColor(getForeground());
-    drawContent(this.notification.title, this.notification.text, theme, imageIcon, (Graphics2D) offgc);
 
-    // do normal redraw
-    paint(offgc);
-    // transfer offscreen to window
-    g.drawImage(offscreen, 0, 0, this);
     }
-    private static
+    private 
     void drawContent(final String title,
                                        final String notificationText,
                                        final Theme theme,
-                                       final ImageIcon imageIcon,Graphics2D g2) {
+                                       final ImageIcon imageIcon,Graphics2D g2d) {
         
         int posX = 5;
 
@@ -195,7 +181,20 @@ class NotifyCanvas extends Canvas {
     	int width = WIDTH - posX - 2;
         int height = getContentHeight(theme.mainTextFont,width,notificationText);
 
+        
         int imageHeight = height+35;
+        
+        Graphics2D g2;
+
+        // create the offscreen buffer and associated Graphics
+        bufferImage = this.createImage(width, imageHeight);
+
+        g2 = (Graphics2D)bufferImage.getGraphics();
+        // clear the exposed area
+        g2.setColor(getBackground());
+        g2.fillRect(0, 0, width, imageHeight);
+        g2.setColor(getForeground());
+        
         g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
@@ -253,7 +252,10 @@ class NotifyCanvas extends Canvas {
             g2.translate(posX, 30);
             mainTextLabel.paint(g2);
             g2.translate(-posX, -30);
-        
+            // do normal redraw
+            paint(g2);
+            // transfer offscreen to window
+            g2d.drawImage(bufferImage, 0, 0, this);
 
     }
     

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.stream.JsonReader;
 
+import cc.translate.api.model.DictResult;
 import cc.translate.api.model.TokenKey;
 import cc.translate.api.model.TranslateResult;
 import okhttp3.RequestBody;
@@ -101,6 +102,26 @@ class TranslateConverterFactory extends Converter.Factory {
                         }
                     }
                     return null;
+                }
+            };
+        }
+        else if (type == DictResult.class) {
+            return new Converter<ResponseBody, DictResult>() {
+                @Override
+                public DictResult convert(ResponseBody value) throws IOException {
+                    String body = value.string();
+                    System.out.println(body);
+                    Pattern pat = Pattern.compile("<ul class=\"base\\-list switch_part\" class=\"\">.*?</ul>",Pattern.DOTALL);
+                    Matcher mat = pat.matcher(body);
+                    if(mat.find()){
+                    	
+                        String content = mat.group(0).replaceAll("\n", "").replaceAll("<p.*?[/]?>", "").replaceAll("\\s+", " ");
+                        DictResult dict = new DictResult();
+                        dict.setContent(content);
+                        return dict;
+                    }
+                    return null;
+
                 }
             };
         }
