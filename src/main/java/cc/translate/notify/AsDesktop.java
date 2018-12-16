@@ -28,7 +28,7 @@ class AsDesktop extends JWindow implements INotify {
     private final LookAndFeel look;
     private final Notify notification;
 
-	private NotifyCanvas notifyCanvas;
+	private NotifyPanel notifyCanvas;
 
 
     // this is on the swing EDT
@@ -71,10 +71,10 @@ class AsDesktop extends JWindow implements INotify {
                        .getBounds();
 
 
-        notifyCanvas = new NotifyCanvas(this, notification, image, theme);
+        notifyCanvas = new NotifyPanel(this, notification, image, theme);
         
-
-        getContentPane().add(notifyCanvas);
+        setContentPane(notifyCanvas);
+        //getContentPane().add(notifyCanvas);
 
         setSize(notifyCanvas.getNotifySize());
         look = new LookAndFeel(this, this, notifyCanvas, notification, bounds, true);

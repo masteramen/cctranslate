@@ -21,6 +21,7 @@ import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.util.List;
 
+import cc.translate.notify.NotifyPanel;
 import cc.translate.util.ActionHandlerLong;
 import cc.translate.util.Property;
 
@@ -67,34 +68,9 @@ class ActiveRenderLoop implements Runnable {
 
             // this needs to be synchronized because we don't want to our canvas removed WHILE we are rendering it.
             synchronized (SwingActiveRender.activeRenders) {
-                final List<Canvas> activeRenders = SwingActiveRender.activeRenders;
+                final List<NotifyPanel> activeRenders = SwingActiveRender.activeRenders;
 
-                for (Canvas canvas : activeRenders) {
-                    if (!canvas.isDisplayable()) {
-                        continue;
-                    }
-
-                    BufferStrategy buffer = canvas.getBufferStrategy();
-
-                    // maybe the frame was closed
-                    try {
-                        graphics = buffer.getDrawGraphics();
-                        canvas.paint(graphics);
-                    } catch (Exception e) {
-                        // the frame can be close as well. can get a "java.lang.IllegalStateException: Component must have a valid
-                        // peer" if it's already be closed during the getDrawGraphics call.
-                        e.printStackTrace();
-                    } finally {
-                        if (graphics != null) {
-                            graphics.dispose();
-
-                            // blit the back buffer to the screen
-                            if (buffer != null && !buffer.contentsLost()) {
-                                buffer.show();
-                            }
-                        }
-                    }
-                }
+                for (NotifyPanel canvas : activeRenders) {}
             }
 
             // Sync the display on some systems (on Linux, this fixes event queue problems)

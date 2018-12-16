@@ -82,7 +82,7 @@ class LookAndFeel {
 
     private final INotify notify;
     private final Window parent;
-    private final NotifyCanvas notifyCanvas;
+    private final NotifyPanel notifyCanvas;
 
     private final float hideAfterDurationInSeconds;
     private final Pos position;
@@ -101,7 +101,7 @@ class LookAndFeel {
 	public int height;
 
     LookAndFeel(final INotify notify, final Window parent,
-                final NotifyCanvas notifyCanvas,
+                final NotifyPanel notifyCanvas,
                 final Notify notification,
                 final Rectangle parentBounds,
                 final boolean isDesktopNotification) {
@@ -144,13 +144,7 @@ class LookAndFeel {
     void onClick(final int x, final int y) {
         // Check - we were over the 'X' (and thus no notify), or was it in the general area?
 
-        // reasonable position for detecting mouse over
-        if (!notifyCanvas.isCloseButton(x, y)) {
-            // only call the general click handler IF we click in the general area!
-            if (onGeneralAreaClickAction != null) {
-                onGeneralAreaClickAction.handle(null);
-            }
-        }
+  
 
         // we always close the notification popup
         notify.close();
@@ -367,7 +361,7 @@ class LookAndFeel {
 	public static void animationProgressAndFadeout(final LookAndFeel sourceLook) {
 		// begin a timeline to get rid of the popup (default is 5 seconds)
 		animation.to(sourceLook, NotifyAccessor.PROGRESS, accessor, sourceLook.hideAfterDurationInSeconds)
-		         .target(NotifyCanvas.WIDTH)
+		         .target(100)
 		         .ease(TweenEquations.Linear)
 		         .addCallback(new TweenCallback() {
 		            @Override

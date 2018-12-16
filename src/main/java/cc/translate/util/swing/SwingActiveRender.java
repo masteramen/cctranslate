@@ -24,6 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+import cc.translate.notify.NotifyPanel;
 import cc.translate.util.ActionHandlerLong;
 
 /**
@@ -39,7 +40,7 @@ public final
 class SwingActiveRender {
     private static Thread activeRenderThread = null;
 
-    static final List<Canvas> activeRenders = new ArrayList<Canvas>();
+    static final List<NotifyPanel> activeRenders = new ArrayList<NotifyPanel>();
     static final List<ActionHandlerLong> activeRenderEvents = new CopyOnWriteArrayList<ActionHandlerLong>();
 
     // volatile, so that access triggers thread synchrony, since 1.6. See the Java Language Spec, Chapter 17
@@ -62,7 +63,7 @@ class SwingActiveRender {
      */
     @SuppressWarnings("Duplicates")
     public static
-    void addActiveRender(final Canvas canvas) {
+    void addActiveRender(final NotifyPanel canvas) {
         // this should be on the EDT
         if (!EventQueue.isDispatchThread()) {
             SwingUtilities.invokeLater(new Runnable() {
@@ -75,24 +76,7 @@ class SwingActiveRender {
             return;
         }
 
-        // setup double-buffering, so we can properly use Active-Rendering, so the animations will be smooth
-        try {
-            canvas.createBufferStrategy(2);
-        } catch (Exception e) {
-            // sometimes it's added too early. Postpone the event until later
-            // note: this is different than SwingUtil, because we MUST invoke it later (and not in the current thread)
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public
-                void run() {
-                    addActiveRender(canvas);
-                }
-            });
-            return;
-        }
-
-        canvas.setIgnoreRepaint(true);
-
+        
         synchronized (activeRenders) {
             if (!hasActiveRenders) {
                 setupActiveRenderThread();
@@ -109,7 +93,7 @@ class SwingActiveRender {
      * @param canvas the canvas to remove
      */
     public static
-    void removeActiveRender(final Canvas canvas) {
+    void removeActiveRender(final NotifyPanel canvas) {
         // this should be on the EDT
         if (!EventQueue.isDispatchThread()) {
             SwingUtilities.invokeLater(new Runnable() {
