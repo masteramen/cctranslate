@@ -7,6 +7,7 @@ import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.management.Notification;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -22,6 +23,8 @@ public class NotifyPanel extends JPanel implements INotify {
 	private JButton closeBtn;
 	private JProgressBar progressBar;
 	private JLabel lblTitle;
+	private Notify notification;
+	private JEditorPane contentEditor;
 public NotifyPanel() {
 	this("test","test");
 }
@@ -51,30 +54,44 @@ public NotifyPanel() {
 	 * Create the frame.
 	 */
 	public NotifyPanel(String title,String content) {
-        /*addComponentListener(new ComponentAdapter() {
+        init(title, content);
+
+		
+	}
+
+	private void init(String title, String content) {
+		/*addComponentListener(new ComponentAdapter() {
             @Override
              public void componentResized(ComponentEvent e) {
                  setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
              }
          });*/
-		setBorder(new EmptyBorder(0, 2, 0, 0));
+		setBorder(new EmptyBorder(0, 0, 0, 0));
 		setLayout(new BorderLayout(0, 0));
 		//setContentPane(contentPane);
 		
-		JEditorPane contentEditor = new JEditorPane();
+		contentEditor = new JEditorPane();
+		contentEditor.setContentType("text/html");
+		contentEditor.setBorder(new EmptyBorder(0, 0, 0, 0));
 		contentEditor.setBackground(Color.BLACK);
-		contentEditor.setForeground(Color.WHITE);
+		contentEditor.setForeground(new Color(255, 255, 255));
 		contentEditor.setText(content);
+
 		add(contentEditor, BorderLayout.CENTER);
 		
 		topPanel = new JPanel();
+		topPanel.setBackground(Color.BLACK);
 		add(topPanel, BorderLayout.NORTH);
 		topPanel.setLayout(new BorderLayout(0, 0));
 		
 		lblTitle = new JLabel(title);
+		lblTitle.setBackground(Color.BLACK);
+		lblTitle.setForeground(Color.WHITE);
 		topPanel.add(lblTitle);
 		
 		closeBtn = new JButton("x");
+		closeBtn.setForeground(Color.WHITE);
+		closeBtn.setBackground(Color.BLACK);
 		closeBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -86,7 +103,7 @@ public NotifyPanel() {
 
 			}
 		});
-		closeBtn.setBorder(null);
+		closeBtn.setBorder(new EmptyBorder(0, 0, 0, 0));
 		closeBtn.setPreferredSize(new Dimension(20, 20));
 		topPanel.add(closeBtn, BorderLayout.EAST);
 		
@@ -100,24 +117,13 @@ public NotifyPanel() {
 		progressBar.setBorderPainted(false);
 		add(progressBar, BorderLayout.SOUTH);
 		
+		this.updateNotify();
 
-        JEditorPane dummyEditorPane=new JEditorPane();
-        dummyEditorPane.setSize(300,Short.MAX_VALUE);
-        dummyEditorPane.setText(contentEditor.getText());
-        
-        
-        contentEditor.setSize(300,Short.MAX_VALUE);
-
-		setSize(300,(int) (dummyEditorPane.getPreferredSize().height+lblTitle.getPreferredSize().getHeight()
-				+3));
-		System.out.println(dummyEditorPane.getPreferredSize().height);
-		System.out.println(getSize().height);
-
-		
 	}
 
 	public NotifyPanel(AsDesktop asDesktop, Notify notification, ImageIcon image, Theme theme) {
-		this(notification.title,notification.text);
+		this.notification = notification;
+		init(this.notification.title, this.notification.text);
 	}
 
 	@Override
@@ -133,13 +139,26 @@ public NotifyPanel() {
 	}
 
 	@Override
-	public void updateUI() {
-		// TODO Auto-generated method stub
-		
+	public void updateNotify() {
+
+		repaint();
 	}
 
 	public Dimension getNotifySize() {
-		// TODO Auto-generated method stub
+		getContentEditor().setText(this.notification.text);
+
+        JEditorPane dummyEditorPane=new JEditorPane();
+        dummyEditorPane.setSize(300,Short.MAX_VALUE);
+        dummyEditorPane.setText(contentEditor.getText().replaceAll("<html>", "<html style=\"color:white\">"));
+        
+        contentEditor.setText(String.format("<span style=\"color:%s\">%s</span>", "white",contentEditor.getText().replaceAll("<.*?>", "")));
+        contentEditor.setSize(300,Short.MAX_VALUE);
+       
+
+		setSize(300,(int) (dummyEditorPane.getPreferredSize().height+lblTitle.getPreferredSize().getHeight()
+				+3));
+		System.out.println(dummyEditorPane.getPreferredSize().height);
+		System.out.println(getSize().height);
 		return getSize();
 	}
 
@@ -154,11 +173,17 @@ public NotifyPanel() {
 	}
 
 	public void resetCacheImage() {
-		// TODO Auto- method stub
+		this.updateNotify();
 		
 	}
 
 	public JProgressBar getProgressBar() {
 		return progressBar;
+	}
+	public JEditorPane getContentEditor() {
+		return contentEditor;
+	}
+	public JButton getCloseBtn() {
+		return closeBtn;
 	}
 }

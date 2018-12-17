@@ -440,7 +440,7 @@ class Notify {
     }
 
 	public void updateUI() {
-		notifyPopup.updateUI();
+		if(notifyPopup!=null)notifyPopup.updateNotify();
 	}
 }
 

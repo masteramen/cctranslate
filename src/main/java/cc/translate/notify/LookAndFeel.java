@@ -15,10 +15,13 @@
  */
 package cc.translate.notify;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.AWTEventListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -26,6 +29,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import dorkbox.tweenEngine.BaseTween;
 import dorkbox.tweenEngine.Tween;
@@ -67,7 +73,7 @@ class LookAndFeel {
     static final int MARGIN = 20;
 
     private static final java.awt.event.WindowAdapter windowListener = new WindowAdapter();
-    private static final MouseAdapter mouseListener = new ClickAdapter();
+    private static final ClickAdapter mouseListener = new ClickAdapter();
 
     private static final Random RANDOM = new Random();
 
@@ -116,7 +122,9 @@ class LookAndFeel {
             parent.addWindowListener(windowListener);
         }
         notifyCanvas.addMouseListener(mouseListener);
-
+        
+        mouseListener.setParent(this);
+        
         hideAfterDurationInSeconds = notification.hideAfterDurationInMillis / 1000.0F;
         position = notification.position;
 
@@ -387,12 +395,62 @@ class LookAndFeel {
 		            }
 		        })
 		         .start();
+/*		Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+		    @Override
+		    public void eventDispatched(AWTEvent event) {
+		        Object source = event.getSource();
+		        if (source instanceof JComponent) {
+		            JComponent comp = (JComponent) source;
+		            System.out.println(comp);
+		            if (SwingUtilities.isDescendingFrom(comp, sourceLook.notifyCanvas)) {
+						sourceLook.setProgress(0);
+						sourceLook.setAlpha(1.0f);
+						animation.cancelTarget(sourceLook);
+		            }
+		        }
+		    }
+		}, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK);*/
 		
-        sourceLook.notifyCanvas.addMouseListener(new MouseListener() {
+		Toolkit.getDefaultToolkit().addAWTEventListener(
+		        new TargetedMouseHandler(sourceLook.parent, sourceLook.notifyCanvas,new MouseListener() {
+					
+					@Override
+					public void mouseReleased(MouseEvent e) {
+						// TODO Auto-generated method stub
+						sourceLook.onClick(e.getX(), e.getY());
+					}
+					
+					@Override
+					public void mousePressed(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseExited(MouseEvent e) {
+						if(!sourceLook.notifyCanvas.contains(e.getPoint())) {
+							animationProgressAndFadeout(sourceLook);
+						}
+					}
+					
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						sourceLook.setProgress(0);
+						sourceLook.setAlpha(1.0f);
+						animation.cancelTarget(sourceLook);
+					}
+					
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						
+					}
+				}), 
+		        AWTEvent.MOUSE_EVENT_MASK);
+		sourceLook.notifyCanvas.getCloseBtn().addMouseListener(new MouseListener() {
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
+				sourceLook.onClick(e.getX(), e.getY());
 				
 			}
 			
@@ -404,21 +462,23 @@ class LookAndFeel {
 			
 			@Override
 			public void mouseExited(MouseEvent e) {
-             animationProgressAndFadeout(sourceLook);
+				// TODO Auto-generated method stub
+				
 			}
 			
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				sourceLook.setProgress(0);
-				sourceLook.setAlpha(1.0f);
-				animation.cancelTarget(sourceLook);
+				// TODO Auto-generated method stub
+				
 			}
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
 				
 			}
 		});
+       // sourceLook.notifyCanvas.addMouseListener();
 	}
     private static
     boolean updatePopupFromMap(final LookAndFeel sourceLook) {

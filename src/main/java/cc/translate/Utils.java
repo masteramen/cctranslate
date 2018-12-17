@@ -117,7 +117,7 @@ public static void main(String[] args) throws InterruptedException {
 		
 		@Override
 		public void run() {
-			notify.text("中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG")
+			notify.text("中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GG 中文GGA")
 			.title(String.format("%s > %s", "en".equals("HELLO") ? "En" : "中文",
 					"en".equals("HELLO") ? "中文" : "En"));
 	System.out.println("Update UI@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");

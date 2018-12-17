@@ -19,14 +19,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 class ClickAdapter extends MouseAdapter {
-
+	private LookAndFeel parent;
     ClickAdapter() {
     }
 
-    @Override
+    public void setParent(LookAndFeel parent) {
+		this.parent = parent;
+	}
+
+	@Override
     public
     void mouseReleased(final MouseEvent e) {
-        INotify parent = ((NotifyCanvas) e.getSource()).parent;
+       // INotify parent =  ((NotifyPanel) e.getSource());
         parent.onClick(e.getX(), e.getY());
     }
 }

@@ -149,7 +149,7 @@ class AsDesktop extends JWindow implements INotify {
     }
 
 	@Override
-	public void updateUI() {
+	public void updateNotify() {
 		look.updateUI();
 
 	}
