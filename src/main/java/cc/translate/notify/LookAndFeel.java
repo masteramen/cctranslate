@@ -16,13 +16,10 @@
 package cc.translate.notify;
 
 import java.awt.AWTEvent;
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.AWTEventListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
@@ -30,21 +27,17 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-
-import dorkbox.tweenEngine.BaseTween;
-import dorkbox.tweenEngine.Tween;
-import dorkbox.tweenEngine.TweenCallback;
-import dorkbox.tweenEngine.TweenEngine;
-import dorkbox.tweenEngine.TweenEquations;
-
 import com.sun.awt.AWTUtilities;
 
 import cc.translate.util.ActionHandler;
 import cc.translate.util.ActionHandlerLong;
 import cc.translate.util.ScreenUtil;
 import cc.translate.util.swing.SwingActiveRender;
+import dorkbox.tweenEngine.BaseTween;
+import dorkbox.tweenEngine.Tween;
+import dorkbox.tweenEngine.TweenCallback;
+import dorkbox.tweenEngine.TweenEngine;
+import dorkbox.tweenEngine.TweenEquations;
 
 @SuppressWarnings({"FieldCanBeLocal"})
 class LookAndFeel {

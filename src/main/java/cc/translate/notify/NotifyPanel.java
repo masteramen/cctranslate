@@ -68,16 +68,6 @@ public NotifyPanel() {
          });*/
 		setBorder(new EmptyBorder(0, 0, 0, 0));
 		setLayout(new BorderLayout(0, 0));
-		//setContentPane(contentPane);
-		
-		contentEditor = new JEditorPane();
-		contentEditor.setContentType("text/html");
-		contentEditor.setBorder(new EmptyBorder(0, 0, 0, 0));
-		contentEditor.setBackground(Color.BLACK);
-		contentEditor.setForeground(new Color(255, 255, 255));
-		contentEditor.setText(content);
-
-		add(contentEditor, BorderLayout.CENTER);
 		
 		topPanel = new JPanel();
 		topPanel.setBackground(Color.BLACK);
@@ -106,11 +96,21 @@ public NotifyPanel() {
 		closeBtn.setBorder(new EmptyBorder(0, 0, 0, 0));
 		closeBtn.setPreferredSize(new Dimension(20, 20));
 		topPanel.add(closeBtn, BorderLayout.EAST);
+		//setContentPane(contentPane);
+		
+		contentEditor = new JEditorPane();
+		contentEditor.setContentType("text/html");
+		contentEditor.setBorder(new EmptyBorder(0, 0, 0, 0));
+		contentEditor.setBackground(Color.BLACK);
+		contentEditor.setForeground(new Color(255, 255, 255));
+		contentEditor.setText(content);
+
+		add(contentEditor, BorderLayout.CENTER);
 		
 		progressBar = new JProgressBar();
 		progressBar.setSize(new Dimension(0, 1));
 		progressBar.setOpaque(true);
-		progressBar.setPreferredSize(new Dimension(1, 2));
+		progressBar.setPreferredSize(new Dimension(1, 1));
 		progressBar.setMaximumSize(new Dimension(32767, 1));
 		progressBar.setMinimumSize(new Dimension(1, 1));
 		progressBar.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -145,21 +145,23 @@ public NotifyPanel() {
 	}
 
 	public Dimension getNotifySize() {
-		getContentEditor().setText(this.notification.text);
+
+		String html=String.format("<div style=\"color:white;background-color:black;\"><h2>%s</h2><div>%s</div></div>",this.notification.title, this.notification.text);
 
         JEditorPane dummyEditorPane=new JEditorPane();
-        dummyEditorPane.setSize(300,Short.MAX_VALUE);
-        dummyEditorPane.setText(contentEditor.getText().replaceAll("<html>", "<html style=\"color:white\">"));
-        
-        contentEditor.setText(String.format("<span style=\"color:%s\">%s</span>", "white",contentEditor.getText().replaceAll("<.*?>", "")));
-        contentEditor.setSize(300,Short.MAX_VALUE);
+        dummyEditorPane.setContentType("text/html");
+        dummyEditorPane.setSize(NotifyCanvas.WIDTH,Short.MAX_VALUE);
+        dummyEditorPane.setText(html);
+        contentEditor.setContentType("text/html");
+
+        contentEditor.setText(html);
+        contentEditor.setSize(NotifyCanvas.WIDTH,Short.MAX_VALUE);
        
 
-		setSize(300,(int) (dummyEditorPane.getPreferredSize().height+lblTitle.getPreferredSize().getHeight()
-				+3));
-		System.out.println(dummyEditorPane.getPreferredSize().height);
-		System.out.println(getSize().height);
+		setSize(NotifyCanvas.WIDTH,(int) (dummyEditorPane.getPreferredSize().height+lblTitle.getPreferredSize().getHeight()+progressBar.getPreferredSize().height
+				+8));
 		return getSize();
+	
 	}
 
 	public void setProgress(int progress) {
