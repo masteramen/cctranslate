@@ -302,6 +302,16 @@
 								<copy file="${project.basedir}/install.bat" todir="${installer.dir}" />
 								<copy file="${project.basedir}/uninstall.bat" todir="${installer.dir}" />
 								<copy file="${project.basedir}/LICENSE" todir="${installer.dir}" />
+								
+				            <property name="src.dir" value="${project.build.sourceDirectory}" />
+				            <property name="buildtime" value="${maven.build.timestamp}" />
+				
+				            <echo file="${project.basedir}/update.txt" message="package ${package.name};${line.separator}" />
+				            <echo file="${project.basedir}/update.txt" append="true" message="public final class Version {${line.separator}" />
+				            <echo file="${project.basedir}/update.txt" append="true"
+				              message=" public static String VERSION=&quot;${buildtime}&quot;;${line.separator}" />
+				            <echo file="${project.basedir}/update.txt" append="true" message="}${line.separator}" />
+				            <echo message="BUILD ${buildtime}" />
 							</target>
 						</configuration>
 					</execution>
@@ -389,7 +399,6 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
-
 
 			</plugins>
 		</pluginManagement>
