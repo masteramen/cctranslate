@@ -1,11 +1,16 @@
 package cc.translate.notify;
 
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.RoundRectangle2D;
 
 import javax.management.Notification;
 import javax.swing.ImageIcon;
@@ -19,7 +24,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class NotifyPanel extends JPanel implements INotify {
+public class RoundNotifyPanel extends JPanel implements INotify {
 
 	private JPanel topPanel;
 	private JButton closeBtn;
@@ -27,10 +32,29 @@ public class NotifyPanel extends JPanel implements INotify {
 	private JLabel lblTitle;
 	private Notify notification;
 	private JEditorPane contentEditor;
-public NotifyPanel() {
+	private JPanel contentPanel;
+public RoundNotifyPanel() {
 	this("test","test");
 }
+public void paintComponent(Graphics g) {
+    //g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
+	Graphics2D g2 = (Graphics2D) g;
+    g2.setComposite(AlphaComposite.Src);
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2.setColor(Color.WHITE);
+    g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 10, 10));
 
+    // ... then compositing the image on top,
+    // using the white shape from above as alpha source
+    g2.setComposite(AlphaComposite.SrcAtop);
+    g2.setColor(Color.GRAY);
+    g2.fillRect(0, 0, getWidth(), getHeight());
+    //g2.drawImage(image, 0, 0, null);
+
+   // g2.dispose();
+	//g.setColor(Color.RED);
+	//g.fillRect(0, 0, getWidth(), getHeight());
+}
 	/**
 	 * Launch the application.
 	 */
@@ -39,11 +63,15 @@ public NotifyPanel() {
 			public void run() {
 				try {
 					JWindow frame = new JWindow();
-					frame.setBounds(100, 100, 200, 200);
+					//frame.setBounds(100, 100, 200, 200);
+					frame.setBackground(new Color(50,50,50,0));
 
-					frame.setContentPane(new NotifyPanel("test","test content"));
+					frame.setContentPane(new RoundNotifyPanel("test","test contentdfdddddd ddddsdd dfdfddd  d df d fd"));
+
+					frame.pack();
 					frame.setVisible(true);
 					frame.setAlwaysOnTop(true);
+					frame.setLocationRelativeTo(null);
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -55,39 +83,37 @@ public NotifyPanel() {
 	/**
 	 * Create the frame.
 	 */
-	public NotifyPanel(String title,String content) {
+	public RoundNotifyPanel(String title,String content) {
         init(title, content);
 
 		
 	}
 
 	private void init(String title, String content) {
-		/*addComponentListener(new ComponentAdapter() {
-            @Override
-             public void componentResized(ComponentEvent e) {
-                 setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
-             }
-         });*/
-		setBorder(new EmptyBorder(0, 0, 0, 0));
-		setLayout(new BorderLayout(0, 0));
-		
+
+		contentPanel = new JPanel();
+        setLayout(new BorderLayout());
+		add(contentPanel,BorderLayout.CENTER);
+		contentPanel.setOpaque(false);
+		contentPanel.setLayout(new BorderLayout(0, 0));
 		topPanel = new JPanel();
-		topPanel.setBackground(Color.BLACK);
-		add(topPanel, BorderLayout.NORTH);
+		contentPanel.add(topPanel, BorderLayout.NORTH);
 		topPanel.setLayout(new BorderLayout(0, 0));
-		
+		topPanel.setOpaque(false);
 		lblTitle = new JLabel(title);
-		lblTitle.setBackground(Color.BLACK);
 		lblTitle.setForeground(Color.WHITE);
 		topPanel.add(lblTitle);
 		
 		closeBtn = new JButton("x");
+		closeBtn.setOpaque(false);
+		closeBtn.setContentAreaFilled(false);
+		closeBtn.setBorderPainted(false);
+
 		closeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
 		closeBtn.setForeground(Color.WHITE);
-		closeBtn.setBackground(Color.BLACK);
 		closeBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -105,29 +131,27 @@ public NotifyPanel() {
 		//setContentPane(contentPane);
 		
 		contentEditor = new JEditorPane();
+		contentEditor.setOpaque(false);
 		contentEditor.setContentType("text/html");
-		contentEditor.setBorder(new EmptyBorder(0, 0, 0, 0));
-		contentEditor.setBackground(Color.BLACK);
 		contentEditor.setForeground(new Color(255, 255, 255));
 		contentEditor.setText(content);
 
-		add(contentEditor, BorderLayout.CENTER);
+		contentPanel.add(contentEditor);
 		
 		progressBar = new JProgressBar();
-		progressBar.setSize(new Dimension(0, 1));
 		progressBar.setOpaque(true);
 		progressBar.setPreferredSize(new Dimension(1, 1));
 		progressBar.setMaximumSize(new Dimension(32767, 1));
 		progressBar.setMinimumSize(new Dimension(1, 1));
 		progressBar.setBorder(new EmptyBorder(0, 0, 0, 0));
 		progressBar.setBorderPainted(false);
-		add(progressBar, BorderLayout.SOUTH);
-		
+		contentPanel.add(progressBar, BorderLayout.SOUTH);
+		updateSize(content);
 		this.updateNotify();
 
 	}
 
-	public NotifyPanel(AsDesktop asDesktop, Notify notification, ImageIcon image, Theme theme) {
+	public RoundNotifyPanel(AsDesktop asDesktop, Notify notification, ImageIcon image, Theme theme) {
 		this.notification = notification;
 		init(this.notification.title, this.notification.text);
 	}
@@ -152,7 +176,13 @@ public NotifyPanel() {
 
 	public Dimension getNotifySize() {
 
-		String html=String.format("<div style=\"color:white;background-color:black;\"><div>%s</div></div>", this.notification.text);
+		String text = this.notification.text;
+		return updateSize(text);
+	
+	}
+
+	private Dimension updateSize(String text) {
+		String html=String.format("<div style=\"color:white;\"><div>%s</div></div>",text );
 
         JEditorPane dummyEditorPane=new JEditorPane();
         dummyEditorPane.setContentType("text/html");
@@ -161,13 +191,11 @@ public NotifyPanel() {
         contentEditor.setContentType("text/html");
 
         contentEditor.setText(html);
-        contentEditor.setSize(NotifyCanvas.WIDTH,Short.MAX_VALUE);
        
 
-		setSize(NotifyCanvas.WIDTH,(int) (dummyEditorPane.getPreferredSize().height+lblTitle.getPreferredSize().getHeight()+progressBar.getPreferredSize().height
-				+8));
+        contentPanel.setPreferredSize(new Dimension(NotifyCanvas.WIDTH,(int) (dummyEditorPane.getPreferredSize().height+lblTitle.getPreferredSize().getHeight()+progressBar.getPreferredSize().height
+				+8)));
 		return getSize();
-	
 	}
 
 	public void setProgress(int progress) {
