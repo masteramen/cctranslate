@@ -50,6 +50,8 @@ class LookAndFeel {
     static final NotifyAccessor accessor = new NotifyAccessor();
     private static final ActionHandlerLong frameStartHandler;
 
+	private static TargetedMouseHandler mouseListenerHandler;
+
 
     static {
         // this is for updating the tween engine during active-rendering
@@ -205,6 +207,7 @@ class LookAndFeel {
         parent.removeWindowListener(windowListener);
         
         parent.removeMouseListener(mouseListener);
+        //if(mouseListenerHandler!=null)Toolkit.getDefaultToolkit().removeAWTEventListener(mouseListenerHandler);
 
         updatePositionsPre(false);
         updatePositionsPost(false);
@@ -388,57 +391,87 @@ class LookAndFeel {
 		            }
 		        })
 		         .start();
-/*		Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-		    @Override
-		    public void eventDispatched(AWTEvent event) {
-		        Object source = event.getSource();
-		        if (source instanceof JComponent) {
-		            JComponent comp = (JComponent) source;
-		            System.out.println(comp);
-		            if (SwingUtilities.isDescendingFrom(comp, sourceLook.notifyCanvas)) {
-						sourceLook.setProgress(0);
-						sourceLook.setAlpha(1.0f);
-						animation.cancelTarget(sourceLook);
-		            }
-		        }
-		    }
-		}, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK);*/
+		/*
+		mouseListenerHandler = new TargetedMouseHandler(sourceLook.parent, sourceLook.notifyCanvas,new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				sourceLook.onClick(e.getX(), e.getY());
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if(!sourceLook.notifyCanvas.contains(e.getPoint())) {
+					animationProgressAndFadeout(sourceLook);
+				}
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				sourceLook.setProgress(0);
+				sourceLook.setAlpha(1.0f);
+				animation.cancelTarget(sourceLook);
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+		});
 		
 		Toolkit.getDefaultToolkit().addAWTEventListener(
-		        new TargetedMouseHandler(sourceLook.parent, sourceLook.notifyCanvas,new MouseListener() {
-					
-					@Override
-					public void mouseReleased(MouseEvent e) {
-						// TODO Auto-generated method stub
-						sourceLook.onClick(e.getX(), e.getY());
-					}
-					
-					@Override
-					public void mousePressed(MouseEvent e) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public void mouseExited(MouseEvent e) {
-						if(!sourceLook.notifyCanvas.contains(e.getPoint())) {
-							animationProgressAndFadeout(sourceLook);
-						}
-					}
-					
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						sourceLook.setProgress(0);
-						sourceLook.setAlpha(1.0f);
-						animation.cancelTarget(sourceLook);
-					}
-					
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						
-					}
-				}), 
+		        mouseListenerHandler, 
 		        AWTEvent.MOUSE_EVENT_MASK);
+		        */
+		sourceLook.notifyCanvas.addContentPanelMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				synchronized (this) {
+					sourceLook.setProgress(0);
+					sourceLook.setAlpha(1.0f);
+					try {
+						animation.cancelTarget(sourceLook);
+
+					}catch(Exception ee) {}
+				}
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				animationProgressAndFadeout(sourceLook);
+
+			}
+			
+		});
 		sourceLook.notifyCanvas.getCloseBtn().addMouseListener(new MouseListener() {
 			
 			@Override
@@ -622,7 +655,8 @@ class LookAndFeel {
     }
 
     void setAlpha(final float alpha) {
-    	AWTUtilities.setWindowOpacity(parent, alpha);
+    	//AWTUtilities.setWindowOpacity(parent, alpha);
+    	parent.setOpacity(alpha);
     	this.alpha = alpha;
 
     }
@@ -673,10 +707,10 @@ class LookAndFeel {
 	public void updateUI() {
 
         this.height = (int) notifyCanvas.getNotifySize().getHeight();
-		this.notifyCanvas.resetCacheImage();
 
+        System.out.println(String.format("update UI height :%d",this.height));
         //updatePopupFromMap(this);
-        //this.parent.invalidate();
+        this.parent.invalidate();
         this.parent.repaint();
         animation.to(this, NotifyAccessor.HEIGHT, accessor, 0.2F)
         .target((float)this.height)

@@ -37,6 +37,7 @@ class AsDesktop extends JWindow implements INotify {
         this.notification = notification;
 
         setAlwaysOnTop(true);
+        setBackground(new Color(0,0,0,0));
 
 
         setLocation(Short.MIN_VALUE, Short.MIN_VALUE);
@@ -71,7 +72,7 @@ class AsDesktop extends JWindow implements INotify {
                        .getBounds();
 
 
-        notifyCanvas = new NotifyPanel(this, notification, image, theme);
+        notifyCanvas = new RoundNotifyPanel(this, notification, image, theme);
         
         setContentPane(notifyCanvas);
         //getContentPane().add(notifyCanvas);

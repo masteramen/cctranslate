@@ -58,7 +58,7 @@ class NotifyAccessor implements TweenAccessor<LookAndFeel> {
     @Override
     public
     void setValues(final LookAndFeel target, final int tweenType, final float[] newValues) {
-        switch (tweenType) {
+    	switch (tweenType) {
             case Y_POS:
                 target.setY((int) newValues[0]);
                 return;

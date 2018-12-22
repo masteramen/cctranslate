@@ -25,7 +25,7 @@ public class Utils {
 
 	public static void notify(String message) {
 
-		Notify notify = Notify.create().title("翻译...").text(message).hideAfter(5000).position(Pos.TOP_RIGHT)
+		Notify notify = Notify.create().title("Loading...").text(message).hideAfter(5000).position(Pos.TOP_RIGHT)
 				// .setScreen(0)
 				.darkStyle()
 				// .shake(1300, 4)

@@ -15,7 +15,7 @@ public class TargetedMouseHandler implements AWTEventListener
 
     private Component parent;
     private Component innerBound;
-    private boolean hasExited = true;
+    private volatile boolean hasExited = true;
 	private MouseListener mouseListener;
 
     public TargetedMouseHandler(Component p, Component p2, MouseListener mouseListener)
@@ -33,12 +33,15 @@ public class TargetedMouseHandler implements AWTEventListener
             if (SwingUtilities.isDescendingFrom(
                 (Component) e.getSource(), parent))
             {
+            	synchronized (this) {
+					
+				
                 MouseEvent m = (MouseEvent) e;
                 if (m.getID() == MouseEvent.MOUSE_ENTERED)
                 {
                     if (hasExited)
                     {
-                        System.out.println("Entered");
+                        System.out.println("Entered...");
                         hasExited = false;
                         mouseListener.mouseEntered((MouseEvent) e);
                     }
@@ -48,9 +51,10 @@ public class TargetedMouseHandler implements AWTEventListener
                         (Component) e.getSource(),
                         m.getPoint(),
                         innerBound);
-                    if (!innerBound.getBounds().contains(p))
+                    if (!hasExited&&!innerBound.getBounds().contains(p))
                     {
-                        System.out.println("Exited");
+                    	System.out.println("hasExited:"+hasExited);
+                        System.out.println("Exited...");
                         hasExited = true;
                         mouseListener.mouseExited((MouseEvent) e);
                     }
@@ -58,6 +62,7 @@ public class TargetedMouseHandler implements AWTEventListener
                     mouseListener.mouseReleased((MouseEvent) e);
 
                 }
+            	}
             }
         }
     }

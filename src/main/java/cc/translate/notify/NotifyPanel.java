@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.management.Notification;
 import javax.swing.ImageIcon;
@@ -19,7 +20,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class NotifyPanel extends JPanel implements INotify {
+public class NotifyPanel extends JPanel {
 
 	private JPanel topPanel;
 	private JButton closeBtn;
@@ -123,31 +124,12 @@ public NotifyPanel() {
 		progressBar.setBorderPainted(false);
 		add(progressBar, BorderLayout.SOUTH);
 		
-		this.updateNotify();
 
 	}
 
 	public NotifyPanel(AsDesktop asDesktop, Notify notification, ImageIcon image, Theme theme) {
 		this.notification = notification;
 		init(this.notification.title, this.notification.text);
-	}
-
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onClick(int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateNotify() {
-
-		repaint();
 	}
 
 	public Dimension getNotifySize() {
@@ -181,7 +163,6 @@ public NotifyPanel() {
 	}
 
 	public void resetCacheImage() {
-		this.updateNotify();
 		
 	}
 
@@ -193,5 +174,10 @@ public NotifyPanel() {
 	}
 	public JButton getCloseBtn() {
 		return closeBtn;
+	}
+
+	public void addContentPanelMouseListener(MouseListener mouseListener) {
+		
+		this.contentEditor.addMouseListener(mouseListener);
 	}
 }
