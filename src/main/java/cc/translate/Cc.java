@@ -544,7 +544,7 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 				System.exit(0);
 			}
 		});
-		trayIcon.displayMessage("CC翻译", "CC翻译已经准备好了，欢迎使用。", TrayIcon.MessageType.INFO);
+		//trayIcon.displayMessage("CC翻译", "CC翻译已经准备好了，欢迎使用。", TrayIcon.MessageType.NONE);
 
 	}
 

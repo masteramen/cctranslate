@@ -32,8 +32,10 @@ class BgPanel extends JPanel {
 //https://stackoverflow.com/questions/12513436/jtextfield-with-rounded-corner-preserving-shadows
 class LoginPanel extends JPanel implements DocumentListener{
     private JTextArea tx;
+	private JFrame frame;
 
-	LoginPanel() {
+	LoginPanel(JFrame t) {
+		this.frame = t;
         setOpaque(false);
         setLayout(new FlowLayout());
         add(new JLabel("username: ")); 
@@ -45,19 +47,21 @@ class LoginPanel extends JPanel implements DocumentListener{
         o.setBackground(Color.white);
         //o.setBorder(new TextBubbleBorder(Color.MAGENTA.darker(),2,20,0));
         
-        tx = new AutoResizingTextArea(1,10,30);
+        tx = new JTextArea();
 		LimitedRowLengthDocument myDoc = new LimitedRowLengthDocument(tx, 30);		
 		tx.setDocument(myDoc);
-		//myDoc.addDocumentListener(this);
+		myDoc.addDocumentListener(this);
         
-        tx.setUI(new RoundedFieldUI ());
+        //tx.setUI(new RoundedFieldUI ());
         tx.setColumns(30);
         tx.setLineWrap(true);
         tx.setWrapStyleWord(true);
         
         //tx.setMaximumSize(new Dimension(100,50));
         //tx.setPreferredSize(new Dimension(100,80));
-        add(new JScrollPane(tx));
+        JScrollPane js = new JScrollPane(tx);
+		add(js);
+		//js.setUI(new RoundedFieldUI ());
         //add(tx);
 		add(o);
         add(new JLabel("password: ")); JPasswordField passfield = new JPasswordField(10);
@@ -70,6 +74,7 @@ class LoginPanel extends JPanel implements DocumentListener{
 	public void insertUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
 		//tx.setSize(tx.getPreferredSize());
+		frame.pack();
 	}
 
 	@Override
@@ -87,11 +92,12 @@ class LoginPanel extends JPanel implements DocumentListener{
 
 public class FrameTestBase extends JFrame  {
     public static void main(String args[]) {
+        FrameTestBase t = new FrameTestBase();
+
         JPanel bgPanel = new BgPanel();
         bgPanel.setLayout(new BorderLayout());
-        bgPanel.add(new LoginPanel(), BorderLayout.CENTER);
+        bgPanel.add(new LoginPanel(t), BorderLayout.CENTER);
 
-        FrameTestBase t = new FrameTestBase();
         t.setContentPane(bgPanel);
         t.setDefaultCloseOperation(EXIT_ON_CLOSE);
         t.setUndecorated(true);

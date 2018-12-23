@@ -54,12 +54,16 @@ public class TestEditor extends JFrame implements DocumentListener {
 
 
 	public void changedUpdate(DocumentEvent e) {
+		System.out.println("update");
+
 	}
 
 
 	public void insertUpdate(DocumentEvent e) {		
 		final Document doc = e.getDocument();
 		txt_number_off_characters.setText("Textlength: " + String.valueOf(doc.getLength()));		
+		System.out.println("update");
+		TestEditor.this.pack();
 	}
 
 
