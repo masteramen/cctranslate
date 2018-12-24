@@ -304,7 +304,7 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 						}*/
 					}
 					if(Config.playCn) {
-						String[] ns = (targetLanguage.equals("en")?raw:result.getTargetText()).replaceAll("([.?!,。？！，])[\\s\\n]+", "$1\n").split("\n+");
+						String[] ns = (targetLanguage.equals("en")?raw:result.getTargetText()).replaceAll("([.?!,。？！，])", "$1\n").split("\n+");
 						for (int i = 0; i < ns.length; i++) {
 							if (ns[i].trim().length() > 0) {
 								String[] lineSeqArr = splitStringByMaxWords(ns[i],30);

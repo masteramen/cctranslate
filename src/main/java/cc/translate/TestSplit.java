@@ -23,7 +23,7 @@ public class TestSplit {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		String str="s1 w2 w3 w4 w5";
+		String str="　　在改革开放的奋进足音中，亿万中国人民改变了自己的命运，迎来新的希望。全国居民人均可支配收入由171元增加到2.6万元，贫困人口累计减少7.4亿人，建成了包括养老、医疗、低保、住房在内的世界最大的社会保障体系……40年来，百姓生活不断改善，忍饥挨饿、缺吃少穿、生活困顿这些几千年来困扰我国人民的问题总体上一去不复返了。从普遍贫穷到奔向全面小康，从封闭落后到自信开放，改革开放深刻改变中国人民的面貌和中华民族的面貌，为实现民族复兴凝聚起万众一心、众志成城的磅礴力量。";
 
 		splitStringByMaxWords(str,3);
 
@@ -38,6 +38,8 @@ public class TestSplit {
 			}
 			sb.append("\n");
 		}
+		System.out.println(sb.toString());
+
 		return sb.toString().trim().split("\n");
 	}
 
