@@ -20,6 +20,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
@@ -391,45 +392,7 @@ class LookAndFeel {
 		            }
 		        })
 		         .start();
-		/*
-		mouseListenerHandler = new TargetedMouseHandler(sourceLook.parent, sourceLook.notifyCanvas,new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				sourceLook.onClick(e.getX(), e.getY());
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				if(!sourceLook.notifyCanvas.contains(e.getPoint())) {
-					animationProgressAndFadeout(sourceLook);
-				}
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				sourceLook.setProgress(0);
-				sourceLook.setAlpha(1.0f);
-				animation.cancelTarget(sourceLook);
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-		});
-		
-		Toolkit.getDefaultToolkit().addAWTEventListener(
-		        mouseListenerHandler, 
-		        AWTEvent.MOUSE_EVENT_MASK);
-		        */
+
 		sourceLook.notifyCanvas.addContentPanelMouseListener(new MouseListener() {
 
 			@Override
@@ -452,57 +415,30 @@ class LookAndFeel {
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				synchronized (this) {
-					sourceLook.setProgress(0);
-					sourceLook.setAlpha(1.0f);
-					try {
-						animation.cancelTarget(sourceLook);
+				sourceLook.setProgress(0);
+				sourceLook.setAlpha(1.0f);
+				try {
+					animation.cancelTarget(sourceLook);
 
-					}catch(Exception ee) {}
-				}
+				}catch(Exception ee) {}
 
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
 				animationProgressAndFadeout(sourceLook);
 
 			}
 			
 		});
-		sourceLook.notifyCanvas.getCloseBtn().addMouseListener(new MouseListener() {
+		sourceLook.notifyCanvas.setCloseMouseListener(new MouseAdapter() {
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				sourceLook.onClick(e.getX(), e.getY());
 				
 			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+
 		});
        // sourceLook.notifyCanvas.addMouseListener();
 	}

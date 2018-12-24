@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JWindow;
@@ -20,7 +21,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class NotifyPanel extends JPanel {
+public class NotifyPanel extends JLayeredPane {
 
 	private JPanel topPanel;
 	private JButton closeBtn;
@@ -179,5 +180,15 @@ public NotifyPanel() {
 	public void addContentPanelMouseListener(MouseListener mouseListener) {
 		
 		this.contentEditor.addMouseListener(mouseListener);
+	}
+
+	public void addCloseEvent(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setCloseMouseListener(MouseListener mouseListener) {
+		
+		
 	}
 }
