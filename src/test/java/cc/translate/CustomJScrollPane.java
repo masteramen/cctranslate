@@ -29,6 +29,7 @@ public class CustomJScrollPane {
     scrollPane.setComponentZOrder(scrollPane.getVerticalScrollBar(), 0);
     scrollPane.setComponentZOrder(scrollPane.getViewport(), 1);
     scrollPane.getVerticalScrollBar().setOpaque(false);
+    scrollPane.setWheelScrollingEnabled(true);
 
     scrollPane.setLayout(new ScrollPaneLayout() {
       @Override

@@ -51,6 +51,7 @@ import cc.translate.api.exception.IllegalTokenKeyException;
 import cc.translate.api.exception.RetrieveTokenKeyFailedException;
 import cc.translate.api.exception.TranslateFailedException;
 import cc.translate.api.model.TranslateResult;
+import cc.translate.api.model.TranslateResult.Sentence;
 import javazoom.jl.decoder.JavaLayerException;
 
 public class Cc implements NativeKeyListener, NativeMouseInputListener {
@@ -284,21 +285,31 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 
 			@Override
 			public void run() {
+				
 				try {
 					// lyric = split.filter((s, i) => i % 2 === 0).map(x => x.match(/^\[\d+/) ?
 					// x.replace(/([a-z]+)/gi, '<span>$1</span>') : x).join('\n')
 					if(Config.playEn) {
-						String[] ns = (targetLanguage.equals("zh_CN")?raw:result.getTargetText()).replaceAll("([.?!])[\\s\\n]+", "$1\n").split("\n+");
+/*						String[] ns = (targetLanguage.equals("zh_CN")?raw:result.getTargetText()).replaceAll("([.?!])[\\s\\n]+", "$1\n").split("\n+");
 						for (int i = 0; i < ns.length; i++) {
 							if (ns[i].trim().length() > 0)
 								translate.playTextAudio(ns[i],"en");
+						}*/
+						for(Sentence setences : result.getSentences()){
+							
+							translate.playTextAudio(targetLanguage.equals("zh_CN")? setences.getSourceText():setences.getTargetText(),"en");
 						}
 					}
 					if(Config.playCn) {
-						String[] ns = (targetLanguage.equals("en")?raw:result.getTargetText()).replaceAll("([.?!])[\\s\\n]+", "$1\n").split("\n+");
+/*						String[] ns = (targetLanguage.equals("en")?raw:result.getTargetText()).replaceAll("([.?!])[\\s\\n]+", "$1\n").split("\n+");
 						for (int i = 0; i < ns.length; i++) {
 							if (ns[i].trim().length() > 0)
 								translate.playTextAudio(ns[i],"zh_CN");
+						}*/
+						
+						for(Sentence setences : result.getSentences()){
+							translate.playTextAudio(targetLanguage.equals("zh_CN")? setences.getTargetText():setences.getSourceText(),"zh_CN");
+
 						}
 					}
 					} catch (RetrieveTokenKeyFailedException | IllegalTokenKeyException | IOException
