@@ -177,18 +177,4 @@ public NotifyPanel() {
 		return closeBtn;
 	}
 
-	public void addContentPanelMouseListener(MouseListener mouseListener) {
-		
-		this.contentEditor.addMouseListener(mouseListener);
-	}
-
-	public void addCloseEvent(Object object) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setCloseMouseListener(MouseListener mouseListener) {
-		
-		
-	}
 }

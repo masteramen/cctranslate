@@ -33,9 +33,7 @@ public class TargetedMouseHandler implements AWTEventListener
             if (SwingUtilities.isDescendingFrom(
                 (Component) e.getSource(), parent))
             {
-            	synchronized (this) {
-					
-				
+
                 MouseEvent m = (MouseEvent) e;
                 if (m.getID() == MouseEvent.MOUSE_ENTERED)
                 {
@@ -62,7 +60,7 @@ public class TargetedMouseHandler implements AWTEventListener
                     mouseListener.mouseReleased((MouseEvent) e);
 
                 }
-            	}
+            	
             }
         }
     }

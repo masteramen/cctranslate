@@ -102,6 +102,8 @@ class LookAndFeel {
 
 	public int height;
 
+	private TargetedMouseHandler targetedMouseHandlerListener;
+
     LookAndFeel(final INotify notify, final Window parent,
                 final NotifyPanel notifyCanvas,
                 final Notify notification,
@@ -143,14 +145,43 @@ class LookAndFeel {
 
         anchorX = getAnchorX(position, parentBounds, isDesktopNotification);
         anchorY = getAnchorY(position, parentBounds, isDesktopNotification);
+        
+        LookAndFeel sourceLook = this;
+        targetedMouseHandlerListener = new TargetedMouseHandler(sourceLook.parent, sourceLook.notifyCanvas,new MouseAdapter() {
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if(!sourceLook.notifyCanvas.contains(e.getPoint())) {
+					animationProgressAndFadeout(sourceLook);
+				}
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				sourceLook.setProgress(0);
+				sourceLook.setAlpha(1.0f);
+				animation.cancelTarget(sourceLook);
+			}
+
+		});
+		Toolkit.getDefaultToolkit().addAWTEventListener(
+				targetedMouseHandlerListener, 
+		        AWTEvent.MOUSE_EVENT_MASK);
+
+		sourceLook.notifyCanvas.getCloseBtn().addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				sourceLook.onClick(e.getX(), e.getY());
+				
+			}
+
+		});
+		
     }
 
     void onClick(final int x, final int y) {
-        // Check - we were over the 'X' (and thus no notify), or was it in the general area?
 
-  
-
-        // we always close the notification popup
         notify.close();
     }
 
@@ -206,12 +237,15 @@ class LookAndFeel {
 
       
         parent.removeWindowListener(windowListener);
-        
         parent.removeMouseListener(mouseListener);
         //if(mouseListenerHandler!=null)Toolkit.getDefaultToolkit().removeAWTEventListener(mouseListenerHandler);
+       
 
+        
         updatePositionsPre(false);
         updatePositionsPost(false);
+        System.out.println("remove targetedMouseHandlerListener");
+        Toolkit.getDefaultToolkit().removeAWTEventListener(targetedMouseHandlerListener);
     }
 
     
@@ -393,53 +427,6 @@ class LookAndFeel {
 		        })
 		         .start();
 
-		sourceLook.notifyCanvas.addContentPanelMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				sourceLook.setProgress(0);
-				sourceLook.setAlpha(1.0f);
-				try {
-					animation.cancelTarget(sourceLook);
-
-				}catch(Exception ee) {}
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				animationProgressAndFadeout(sourceLook);
-
-			}
-			
-		});
-		sourceLook.notifyCanvas.setCloseMouseListener(new MouseAdapter() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				sourceLook.onClick(e.getX(), e.getY());
-				
-			}
-
-		});
        // sourceLook.notifyCanvas.addMouseListener();
 	}
     private static
