@@ -179,6 +179,7 @@ public class Translate {
 
 	public void playTextAudio(String text, String tl)
 			throws RetrieveTokenKeyFailedException, IllegalTokenKeyException, IOException, JavaLayerException {
+		System.out.println(String.format("%s:%s", tl,text));
 		InputStream is = getAuidoUrl(text, tl);
 		BufferedInputStream buffer = new BufferedInputStream(is);
 		Player player = new Player(buffer);

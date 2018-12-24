@@ -290,27 +290,34 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 					// lyric = split.filter((s, i) => i % 2 === 0).map(x => x.match(/^\[\d+/) ?
 					// x.replace(/([a-z]+)/gi, '<span>$1</span>') : x).join('\n')
 					if(Config.playEn) {
-/*						String[] ns = (targetLanguage.equals("zh_CN")?raw:result.getTargetText()).replaceAll("([.?!])[\\s\\n]+", "$1\n").split("\n+");
+						String[] ns = (targetLanguage.equals("zh_CN")?raw:result.getTargetText()).replaceAll("([.,?!])[\\s\\n]+", "$1\n").split("\n+");
 						for (int i = 0; i < ns.length; i++) {
-							if (ns[i].trim().length() > 0)
-								translate.playTextAudio(ns[i],"en");
-						}*/
-						for(Sentence setences : result.getSentences()){
+							if (ns[i].trim().length() > 0) {
+								String[] lineSeqArr = splitStringByMaxWords(ns[i],30);
+								for(int k=0;k<lineSeqArr.length;k++)
+									translate.playTextAudio(lineSeqArr[k],"en");
+							}
+						}
+						/*for(Sentence setences : result.getSentences()){
 							
 							translate.playTextAudio(targetLanguage.equals("zh_CN")? setences.getSourceText():setences.getTargetText(),"en");
-						}
+						}*/
 					}
 					if(Config.playCn) {
-/*						String[] ns = (targetLanguage.equals("en")?raw:result.getTargetText()).replaceAll("([.?!])[\\s\\n]+", "$1\n").split("\n+");
+						String[] ns = (targetLanguage.equals("en")?raw:result.getTargetText()).replaceAll("([.?!,。？！，])[\\s\\n]+", "$1\n").split("\n+");
 						for (int i = 0; i < ns.length; i++) {
-							if (ns[i].trim().length() > 0)
-								translate.playTextAudio(ns[i],"zh_CN");
-						}*/
-						
+							if (ns[i].trim().length() > 0) {
+								String[] lineSeqArr = splitStringByMaxWords(ns[i],30);
+								for(int k=0;k<lineSeqArr.length;k++)
+									translate.playTextAudio(lineSeqArr[k],"zh_CN");
+							}
+
+						}
+						/*
 						for(Sentence setences : result.getSentences()){
 							translate.playTextAudio(targetLanguage.equals("zh_CN")? setences.getTargetText():setences.getSourceText(),"zh_CN");
 
-						}
+						}*/
 					}
 					} catch (RetrieveTokenKeyFailedException | IllegalTokenKeyException | IOException
 						| JavaLayerException e) {
@@ -327,7 +334,17 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 		return result;
 
 	}
-
+	private static String[] splitStringByMaxWords(String str,int maxWords) {
+		String[] strArr = str.split("\\s+");
+		StringBuilder sb = new StringBuilder();
+		for(int i=0;i<strArr.length;i+=maxWords) {
+			for(int k=i;k<i+maxWords&&k<strArr.length;k++) {
+				sb.append(strArr[k]).append(" ");
+			}
+			sb.append("\n");
+		}
+		return sb.toString().trim().split("\n");
+	}
 	// 判断一个字符是否是中文
 	public static boolean isChinese(char c) {
 		return c >= 0x4E00 && c <= 0x9FA5;// 根据字节码判断
