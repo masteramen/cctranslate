@@ -170,11 +170,9 @@ public class RoundNotifyPanel extends NotifyPanel {
 		panel.setLayout(new BorderLayout(0, 0));
 
 		progressBar = new JProgressBar();
-		progressBar.setBackground(Color.BLACK);
+		progressBar.setForeground(Color.RED);
+		progressBar.setBackground(Color.YELLOW);
 
-		progressBar.setPreferredSize(new Dimension(1, 1));
-		progressBar.setMaximumSize(new Dimension(32767, 1));
-		progressBar.setMinimumSize(new Dimension(1, 1));
 		progressBar.setBorder(null);
 		progressBar.setBorderPainted(false);
 
@@ -191,9 +189,6 @@ public class RoundNotifyPanel extends NotifyPanel {
 		// loadingLabel.setHorizontalTextPosition(JLabel.CENTER);
 		panel.add(loadingLabel, BorderLayout.NORTH);
 
-		panel.add(progressBar, BorderLayout.CENTER);
-		progressBar.setBounds(8, 1, getWidth() - 16, 1);
-		add(progressBar, JLayeredPane.DEFAULT_LAYER, 3);
 
 		scrollBar = new JScrollPane(contentEditor, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -208,8 +203,9 @@ public class RoundNotifyPanel extends NotifyPanel {
 		scrollBar.getVerticalScrollBar().setPreferredSize(new Dimension(3, 0));
 
 		scrollBar.getVerticalScrollBar().setUI(new MyScrollBarUI());
+		add(progressBar, JLayeredPane.PALETTE_LAYER, 3);
 		add(scrollBar, JLayeredPane.DEFAULT_LAYER, 3);
-		add(closeBtn, JLayeredPane.DEFAULT_LAYER, 3);
+		add(closeBtn, JLayeredPane.PALETTE_LAYER, 3);
 		updateSize(content);
 
 		this.updateNotify();
@@ -284,6 +280,7 @@ public class RoundNotifyPanel extends NotifyPanel {
 		width = (int) dim.getWidth();
 		height = (int) dim.getHeight();
 		scrollBar.setBounds(0, 0, width, height > 600 ? 600 : height);
+		progressBar.setBounds(4, 1, width - 8, 2);
 
 		System.out.println(String.format("text height:%f", adjHeight));
 		System.out.println(String.format("panel height:%d", getHeight()));

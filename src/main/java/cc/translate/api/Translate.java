@@ -45,11 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Translate API Wrapper
- * 
- *  ligboy@gmail.com
- */
+
 @SuppressWarnings("WeakerAccess")
 public class Translate {
 
