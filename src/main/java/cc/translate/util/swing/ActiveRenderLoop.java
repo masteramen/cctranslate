@@ -66,13 +66,6 @@ class ActiveRenderLoop implements Runnable {
                 actionHandlerLong.handle(updateDeltaNanos);
             }
 
-            // this needs to be synchronized because we don't want to our canvas removed WHILE we are rendering it.
-            synchronized (SwingActiveRender.activeRenders) {
-                final List<NotifyPanel> activeRenders = SwingActiveRender.activeRenders;
-
-                for (NotifyPanel canvas : activeRenders) {}
-            }
-
             // Sync the display on some systems (on Linux, this fixes event queue problems)
             Toolkit.getDefaultToolkit()
                    .sync();

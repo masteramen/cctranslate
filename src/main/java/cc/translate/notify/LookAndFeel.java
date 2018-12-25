@@ -22,13 +22,10 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
-
-import com.sun.awt.AWTUtilities;
 
 import cc.translate.util.ActionHandler;
 import cc.translate.util.ActionHandlerLong;
@@ -151,16 +148,22 @@ class LookAndFeel {
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				if(!sourceLook.notifyCanvas.contains(e.getPoint())) {
-					animationProgressAndFadeout(sourceLook);
+				synchronized (sourceLook) {
+					//if(!sourceLook.notifyCanvas.contains(e.getPoint())) {
+						animationProgressAndFadeout(sourceLook);
+					//}
 				}
+
 			}
 			
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				sourceLook.setProgress(0);
-				sourceLook.setAlpha(1.0f);
-				animation.cancelTarget(sourceLook);
+				synchronized (sourceLook) {
+					sourceLook.setProgress(0);
+					sourceLook.setAlpha(1.0f);
+					animation.cancelTarget(sourceLook);
+
+				}
 			}
 
 		});
