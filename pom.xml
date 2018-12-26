@@ -200,6 +200,7 @@
             </executions>
         </plugin>
 			<!-- http://launch4j.sourceforge.net/docs.html#Configuration_file -->
+			<!--  
 			<plugin>
 				<groupId>com.akathist.maven.plugins.launch4j</groupId>
 				<artifactId>launch4j-maven-plugin</artifactId>
@@ -251,6 +252,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 <!-- 
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -296,7 +298,8 @@
 									<fileset dir="${project.basedir}/external/commons-daemon" />
 								</copy>
 								<copy file="${project.build.directory}/cc.jar" todir="${installer.dir}" />
-								<copy file="${project.build.directory}/cc.exe" todir="${installer.dir}" />
+								<copy file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar" todir="${project.basedir}/" />
+<!-- 								<copy file="${project.build.directory}/cc.exe" todir="${installer.dir}" /> -->
 
 								<copy file="${project.basedir}/test.bat" todir="${installer.dir}" />
 								<copy file="${project.basedir}/install.bat" todir="${installer.dir}" />

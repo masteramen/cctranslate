@@ -1,0 +1,3 @@
+2018
+https://github.com/masteramen/cctranslate/blob/Panel/cc.jar?raw=true
+https://github.com/masteramen/cctranslate/blob/Panel/release.txt?raw=true
