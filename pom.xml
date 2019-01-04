@@ -295,7 +295,7 @@
 						<configuration>
 							<tasks>
 								<echo message="${project.basedir}/"/>
-								<copy file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar" todir="${project.basedir}/" />
+								<copy file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar" tofile="${project.basedir}/cc.jar" />
 							</tasks>
 						</configuration>
 					</execution>
