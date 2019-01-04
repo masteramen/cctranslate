@@ -294,8 +294,13 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<echo message="${project.basedir}/"/>
-								<copy file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar" tofile="${project.basedir}/cc.jar" />
+							<echo message="${project.basedir}/"/>
+							<property name="buildtime" value="${maven.build.timestamp}" />
+							<copy file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar" tofile="${project.basedir}/cc.jar" />
+							<echo file="${project.basedir}/release.txt" message="${buildtime}${line.separator}" />
+							<echo file="${project.basedir}/release.txt" append="true" message="https://github.com/masteramen/cctranslate/blob/Panel/cc.jar?raw=true${line.separator}" />
+		
+				            <echo message="BUILD ${buildtime}" />
 							</tasks>
 						</configuration>
 					</execution>
