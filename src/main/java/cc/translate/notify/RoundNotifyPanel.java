@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,6 +33,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.UIManager;
 
 class BarUI extends BasicProgressBarUI {
 
@@ -86,13 +88,17 @@ public class RoundNotifyPanel extends NotifyPanel {
 			// ... then compositing the image on top,
 			// using the white shape from above as alpha source
 			g2.setComposite(AlphaComposite.SrcAtop);
+			//g2.setComposite(AlphaComposite.Clear);
 			g2.setColor(new Color(50, 50, 50));
 			g2.fillRect(0, 0, w, h);
 			g2.dispose();
 			System.out.println(String.format("paint height:%d", h));
 		}
-		g.drawImage(bufferedImage, 0, 0, null);
-
+		Graphics2D g2 = (Graphics2D) g;
+		
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
+		g2.drawImage(bufferedImage, 0, 0, null);
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 		// g2.drawImage(image, 0, 0, null);
 		// g2.dispose();
 		// g.setColor(Color.RED);
@@ -106,13 +112,15 @@ public class RoundNotifyPanel extends NotifyPanel {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					JFrame frame = new JFrame();
+					JDialog frame = new JDialog();
 					frame.setUndecorated(true);
 					// frame.setBounds(100, 100, 200, 200);
 					//frame.setBackground(new Color(50, 50, 50, 0));
 					frame.requestFocusInWindow();
+					//frame.setOpacity(0);
+					 frame.setBackground(new Color(50,50,50,0));
 					String str = "";
-					for (int i = 0; i < 6; i++)
+					for (int i = 0; i < 1; i++)
 						str += "坚持改革开放的初心和使命 I am trying to paint a rounded rectangle around a JScrollPane. For the life of me I can't figure out how to do this! No matter what I try, the border is not visible. I have figured out that it is drawing BEHIND the contents and not over them. The only thing inside the scroll pane is a JPanel with some graphics painted onto it. Does anyone know how to fix this?";
 
 					frame.setContentPane(new RoundNotifyPanel("test",
@@ -170,8 +178,9 @@ public class RoundNotifyPanel extends NotifyPanel {
 		panel.setLayout(new BorderLayout(0, 0));
 
 		progressBar = new JProgressBar();
-		progressBar.setForeground(Color.RED);
-		progressBar.setBackground(Color.YELLOW);
+		progressBar.setOpaque(false);
+		//progressBar.setForeground(Color.LIGHT_GRAY);
+		//progressBar.setBackground(Color.LIGHT_GRAY);
 
 		progressBar.setBorder(null);
 		progressBar.setBorderPainted(false);
@@ -259,15 +268,17 @@ public class RoundNotifyPanel extends NotifyPanel {
 	}
 
 	private Dimension updateSize(String text) {
-		String html = String.format("<div style=\"color:white;\"><div>%s</div></div>", text);
+		String html = String.format("<div style=\"color:#FFFFFF;\"><div>%s</div></div>", text);
 
 		JEditorPane dummyEditorPane = new JEditorPane();
+		
 		dummyEditorPane.setContentType("text/html");
 		dummyEditorPane.setSize(NotifyCanvas.WIDTH, Short.MAX_VALUE);
 		dummyEditorPane.setText(html);
 		contentEditor.setContentType("text/html");
 
 		contentEditor.setText(html);
+		//contentEditor.setOpaque(true);
 		// loadingLabel.setText(this.notification.title);
 
 		double adjHeight = dummyEditorPane.getPreferredSize().height + lblTitle.getPreferredSize().getHeight()
@@ -280,7 +291,8 @@ public class RoundNotifyPanel extends NotifyPanel {
 		width = (int) dim.getWidth();
 		height = (int) dim.getHeight();
 		scrollBar.setBounds(0, 0, width, height > 600 ? 600 : height);
-		progressBar.setBounds(4, 1, width - 8, 2);
+		scrollBar.getViewport().setOpaque(false);
+		progressBar.setBounds(4, 1, width - 8, 1);
 
 		System.out.println(String.format("text height:%f", adjHeight));
 		System.out.println(String.format("panel height:%d", getHeight()));
