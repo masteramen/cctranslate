@@ -293,29 +293,10 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-							<target>
-								<copy todir="${installer.dir}/commons-daemon">
-									<fileset dir="${project.basedir}/external/commons-daemon" />
-								</copy>
-								<copy file="${project.build.directory}/cc.jar" todir="${installer.dir}" />
+							<tasks>
+								<echo message="${project.basedir}/"/>
 								<copy file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar" todir="${project.basedir}/" />
-<!-- 								<copy file="${project.build.directory}/cc.exe" todir="${installer.dir}" /> -->
-
-								<copy file="${project.basedir}/test.bat" todir="${installer.dir}" />
-								<copy file="${project.basedir}/install.bat" todir="${installer.dir}" />
-								<copy file="${project.basedir}/uninstall.bat" todir="${installer.dir}" />
-								<copy file="${project.basedir}/LICENSE" todir="${installer.dir}" />
-								
-				            <property name="src.dir" value="${project.build.sourceDirectory}" />
-				            <property name="buildtime" value="${maven.build.timestamp}" />
-				
-				            <echo file="${project.basedir}/update.txt" message="package ${package.name};${line.separator}" />
-				            <echo file="${project.basedir}/update.txt" append="true" message="public final class Version {${line.separator}" />
-				            <echo file="${project.basedir}/update.txt" append="true"
-				              message=" public static String VERSION=&quot;${buildtime}&quot;;${line.separator}" />
-				            <echo file="${project.basedir}/update.txt" append="true" message="}${line.separator}" />
-				            <echo message="BUILD ${buildtime}" />
-							</target>
+							</tasks>
 						</configuration>
 					</execution>
 				</executions>
