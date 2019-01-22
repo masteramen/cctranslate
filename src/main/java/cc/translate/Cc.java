@@ -419,6 +419,17 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 		CheckboxMenuItem cnItem = new CheckboxMenuItem("中文");
 		cnItem.setState(Config.playCn);
 		
+
+		
+		popup.add(playMenu);
+
+		
+		Menu displayLocation = new Menu("显示位置");
+		CheckboxMenuItem followMouse = new CheckboxMenuItem("鼠标位置");
+		followMouse.setState(Config.showWhere==Config.ShowLocation.FOLLOW_MOUSE);
+		CheckboxMenuItem topRight = new CheckboxMenuItem("右上角");
+		cnItem.setState(Config.showWhere==Config.ShowLocation.TOP_RIGHT);
+		
 		ItemListener cbListener = new ItemListener() {
 
 			@Override
@@ -428,12 +439,17 @@ public class Cc implements NativeKeyListener, NativeMouseInputListener {
 				if(e.getSource()==cbRegistHook) Config.registerHook = e.getStateChange() == ItemEvent.SELECTED;
 				if(e.getSource()==cbUsingSystemProxy) Config.usingSystemProxy = e.getStateChange() == ItemEvent.SELECTED;
 				if(e.getSource()==cbResultToClip) Config.copyResultToClip = e.getStateChange() == ItemEvent.SELECTED;
-
+				if(e.getSource()==followMouse && e.getStateChange() == ItemEvent.SELECTED) Config.showWhere=Config.ShowLocation.FOLLOW_MOUSE;
+				if(e.getSource()==topRight && e.getStateChange() == ItemEvent.SELECTED) Config.showWhere=Config.ShowLocation.TOP_RIGHT;
 			}
 		};
 		
 		popup.add(playMenu);
-
+		
+		popup.add(displayLocation);
+		displayLocation.add(followMouse);
+		displayLocation.add(topRight);
+		
 		playMenu.add(enItem);
 		playMenu.add(cnItem);
 		cbUsingSystemProxy.addItemListener(cbListener);

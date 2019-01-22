@@ -7,7 +7,14 @@ public class Config {
 	public static boolean usingSystemProxy = true;
 	public static boolean cacheHistory = true;
 	public static boolean copyResultToClip = true;
+	public static ShowLocation showWhere = ShowLocation.FOLLOW_MOUSE;
 	private Config() {};
+	
+	public enum ShowLocation{
+		FOLLOW_MOUSE,
+		TOP_RIGHT
+	}
 	
 
 }
+

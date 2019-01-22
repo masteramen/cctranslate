@@ -16,7 +16,10 @@
 package cc.translate.notify;
 
 import java.awt.AWTEvent;
+import java.awt.Dimension;
+import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -27,6 +30,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+import cc.translate.Config;
 import cc.translate.util.ActionHandler;
 import cc.translate.util.ActionHandlerLong;
 import cc.translate.util.ScreenUtil;
@@ -150,7 +154,7 @@ class LookAndFeel {
 			public void mouseExited(MouseEvent e) {
 				synchronized (sourceLook) {
 					//if(!sourceLook.notifyCanvas.contains(e.getPoint())) {
-						animationProgressAndFadeout(sourceLook);
+					if(Config.showWhere!=Config.ShowLocation.FOLLOW_MOUSE)animationProgressAndFadeout(sourceLook);
 					//}
 				}
 
@@ -167,6 +171,7 @@ class LookAndFeel {
 			}
 
 		});
+        
 		Toolkit.getDefaultToolkit().addAWTEventListener(
 				targetedMouseHandlerListener, 
 		        AWTEvent.MOUSE_EVENT_MASK);
@@ -372,27 +377,38 @@ class LookAndFeel {
             int targetY;
             int anchorX = sourceLook.anchorX;
             int anchorY = sourceLook.anchorY;
+            if(Config.showWhere==Config.ShowLocation.FOLLOW_MOUSE){
+            	PointerInfo a = MouseInfo.getPointerInfo();
+            	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            	anchorX = a.getLocation().x;
+            	targetY = a.getLocation().y;
+            	
+            }else{
+                if (index == 0) {
+                    targetY = anchorY;
+                } else {
+                    boolean showFromTop = isShowFromTop(sourceLook);
+                    
+                    
 
-            if (index == 0) {
-                targetY = anchorY;
-            } else {
-                boolean showFromTop = isShowFromTop(sourceLook);
+                    if (sourceLook.isDesktopNotification && index == 1) {
+                        // have to adjust for offsets when the window-manager has a toolbar that consumes space and prevents overlap.
+                        // this is only done when the 2nd popup is added to the list
+                        looks.calculateOffset(showFromTop, anchorX, anchorY);
+                    }
 
-                if (sourceLook.isDesktopNotification && index == 1) {
-                    // have to adjust for offsets when the window-manager has a toolbar that consumes space and prevents overlap.
-                    // this is only done when the 2nd popup is added to the list
-                    looks.calculateOffset(showFromTop, anchorX, anchorY);
+                    if (showFromTop) {
+                       // targetY = anchorY + (index * (NotifyCanvas.HEIGHT + SPACER)) + looks.getOffsetY();
+                        targetY = anchorY + (index * (SPACER)) + looks.getHeightOf(index) + looks.getOffsetY();
+                    }
+                    else {
+                        targetY = anchorY - (index * (NotifyCanvas.HEIGHT + SPACER)) + looks.getOffsetY();
+                    }
+
+
                 }
-
-                if (showFromTop) {
-                   // targetY = anchorY + (index * (NotifyCanvas.HEIGHT + SPACER)) + looks.getOffsetY();
-                    targetY = anchorY + (index * (SPACER)) + looks.getHeightOf(index) + looks.getOffsetY();
-                }
-                else {
-                    targetY = anchorY - (index * (NotifyCanvas.HEIGHT + SPACER)) + looks.getOffsetY();
-                }
-
             }
+
 
             looks.add(sourceLook);
             sourceLook.setLocation(anchorX, targetY);
@@ -436,6 +452,9 @@ class LookAndFeel {
     boolean updatePopupFromMap(final LookAndFeel sourceLook) {
         boolean showFromTop = isShowFromTop(sourceLook);
         boolean popupsAreEmpty;
+        if(Config.showWhere==Config.ShowLocation.FOLLOW_MOUSE){
+        	return popups.isEmpty();
+        }
 
         synchronized (popups) {
             popupsAreEmpty = popups.isEmpty();
@@ -646,6 +665,7 @@ class LookAndFeel {
             public
             void onEvent(final int type, final BaseTween<?> source) {
                 if (type == Events.COMPLETE) {
+                	if(Config.showWhere!=Config.ShowLocation.FOLLOW_MOUSE)
                         animationProgressAndFadeout(LookAndFeel.this);
          
                     

@@ -52,7 +52,7 @@ class BarUI extends BasicProgressBarUI {
 public class RoundNotifyPanel extends NotifyPanel {
 
 	private JPanel topPanel;
-	private JButton closeBtn;
+	private JLabel closeBtn;
 	private JProgressBar progressBar;
 	private JLabel lblTitle;
 	private Notify notification;
@@ -156,8 +156,9 @@ public class RoundNotifyPanel extends NotifyPanel {
 		lblTitle = new JLabel("");
 		// lblTitle.setPreferredSize(new Dimension(300, 20));
 		lblTitle.setForeground(Color.WHITE);
-
-		closeBtn = new JButton("x");
+		
+		closeBtn = new JLabel("x");
+		closeBtn.setBorder(new EmptyBorder(0, 0, 0, 0));
 
 		setupCloseButton();
 
@@ -222,15 +223,14 @@ public class RoundNotifyPanel extends NotifyPanel {
 	}
 
 	private void setupCloseButton() {
-		closeBtn.setContentAreaFilled(false);
-		closeBtn.setBorderPainted(false);
+		//closeBtn.setContentAreaFilled(false);
+		//closeBtn.setBorderPainted(false);
 		closeBtn.setPreferredSize(new Dimension(16, 16));
 		closeBtn.setAlignmentY(Component.TOP_ALIGNMENT);
 		closeBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		closeBtn.setOpaque(false);
-		closeBtn.setForeground(Color.WHITE);
-		closeBtn.setBorder(null);
-		closeBtn.setBounds(0, 0, 16, 16);
+		closeBtn.setForeground(Color.GRAY);
+		closeBtn.setBounds(5, 2, 16, 16);
 		closeBtn.addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -323,7 +323,7 @@ public class RoundNotifyPanel extends NotifyPanel {
 		return contentEditor;
 	}
 
-	public JButton getCloseBtn() {
+	public JComponent getCloseBtn() {
 		return closeBtn;
 	}
 

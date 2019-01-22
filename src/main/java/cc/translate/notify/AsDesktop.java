@@ -8,21 +8,25 @@ import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JWindow;
 
 import com.sun.awt.AWTUtilities;
 
+import cc.translate.Config;
 import cc.translate.util.ScreenUtil;
 import cc.translate.util.SwingUtil;
 
 
 @SuppressWarnings({"Duplicates", "FieldCanBeLocal", "WeakerAccess", "DanglingJavadoc"})
 public
-class AsDesktop extends JWindow implements INotify {
+class AsDesktop extends JDialog implements INotify {
     private static final long serialVersionUID = 1L;
 
     private final LookAndFeel look;
@@ -35,7 +39,7 @@ class AsDesktop extends JWindow implements INotify {
     @SuppressWarnings("NumericCastThatLosesPrecision")
     AsDesktop(final Notify notification, final ImageIcon image, final Theme theme) {
         this.notification = notification;
-
+        setUndecorated(true);
         setAlwaysOnTop(true);
         setBackground(new Color(0,0,0,0));
 
@@ -79,6 +83,53 @@ class AsDesktop extends JWindow implements INotify {
 
         setSize(notifyCanvas.getNotifySize());
         look = new LookAndFeel(this, this, notifyCanvas, notification, bounds, true);
+        
+        if(Config.showWhere==Config.ShowLocation.FOLLOW_MOUSE){
+        	this.addWindowListener(new WindowListener() {
+				
+				@Override
+				public void windowOpened(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void windowIconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void windowDeiconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void windowDeactivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					AsDesktop.this.setVisible(false);
+				}
+				
+				@Override
+				public void windowClosing(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void windowClosed(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void windowActivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+        }
       
 
     }

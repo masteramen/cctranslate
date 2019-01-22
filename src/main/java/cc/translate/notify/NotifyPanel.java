@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import javax.management.Notification;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -173,7 +174,7 @@ public NotifyPanel() {
 	public JEditorPane getContentEditor() {
 		return contentEditor;
 	}
-	public JButton getCloseBtn() {
+	public JComponent getCloseBtn() {
 		return closeBtn;
 	}
 
