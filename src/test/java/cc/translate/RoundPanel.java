@@ -17,6 +17,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JPanel;
+import javax.swing.JWindow;
 import javax.swing.Timer;
 import javax.swing.JButton;
 import javax.swing.JDialog;

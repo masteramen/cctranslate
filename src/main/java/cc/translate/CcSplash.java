@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.*;
@@ -43,7 +44,7 @@ public class CcSplash  implements Runnable {
 		window.setVisible(true); // 显示窗口
 	    FileLock lck;
 		try {
-			lck = new FileOutputStream("cc.lock").getChannel().tryLock();
+			lck = new FileOutputStream(System.getProperty("user.home")+File.separator+".cc.lock").getChannel().tryLock();
 			 if(lck == null) {
 			      progress.setString("A previous instance is already running.");
 			      window.getContentPane().addMouseListener(new MouseAdapter() {
