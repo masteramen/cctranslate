@@ -1,4 +1,4 @@
-package cc.translate;
+/*package cc.translate;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
@@ -107,4 +107,4 @@ public class FrameTestBase extends JFrame  {
         t.setVisible(true);
         t.setLocation(300,300);
     }
-}
+}*/

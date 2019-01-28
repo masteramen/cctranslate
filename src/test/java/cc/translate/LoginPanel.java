@@ -1,4 +1,4 @@
-package cc.translate;
+/*package cc.translate;
 import java.awt.Color;
 import java.awt.FlowLayout;
 
@@ -64,4 +64,4 @@ public class LoginPanel extends JPanel implements DocumentListener{
 		// TODO Auto-generated method stub
 		
 	}
-}
+}*/
