@@ -10,43 +10,49 @@ import java.net.*;
 import java.nio.channels.FileLock;
  
 public class CcSplash  implements Runnable {
+	private static JProgressBar progressBar;
+	private static JDialog splashDialog;
+	private static JLabel titleLabel;
+	private static JLabel closeLabel;
 	Thread splashThread; // 进度条更新线程
-	JProgressBar progress; // 进度条
-	JWindow window = new JWindow();
+
 	public CcSplash() {
-		Container container = window.getContentPane(); // 得到容器
-		window.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // 设置光标
-		URL url = getClass().getResource("/ccsplash.jpg"); // 图片的位置
-		if (url != null) {
-			container.add(new JLabel(new ImageIcon(url)), BorderLayout.CENTER); // 增加图片
-		}
-		progress = new JProgressBar(1, 100); // 实例化进度条
-		progress.setStringPainted(true); // 描绘文字
-		progress.setString("加载程序中,请稍候......"); // 设置显示文字
-		progress.setBackground(Color.white); // 设置背景色
-		container.add(progress, BorderLayout.SOUTH); // 增加进度条到容器上
- 
-		Dimension screen = window.getToolkit().getScreenSize(); // 得到屏幕尺寸
-		window.pack(); // 窗口适应组件尺寸
-		window.setAlwaysOnTop(true);
-		window.setLocation((screen.width - window.getSize().width) / 2,
-				(screen.height - window.getSize().height) / 2); // 设置窗口位置
+
 	}
  
 	public void start() {
-		window.toFront(); // 窗口前端显示
 		splashThread = new Thread(this); // 实例化线程
 		splashThread.start(); // 开始运行线程
 	}
  
 	public void run() {
-		window.setVisible(true); // 显示窗口
+		URL url = getClass().getResource("/ccsplash.jpg"); // 图片的位置
+		if(CcSplash.splashDialog==null)  {
+			CcSplash.splashDialog = new JDialog();
+			CcSplash.progressBar = new JProgressBar(1, 100);
+			Container container = splashDialog.getContentPane(); // 得到容器
+			splashDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // 设置光标
+			if (url != null) {
+				container.add(new JLabel(new ImageIcon(url)), BorderLayout.CENTER); // 增加图片
+			}
+			container.add(progressBar, BorderLayout.SOUTH); // 增加进度条到容器上
+			
+			Dimension screen = splashDialog.getToolkit().getScreenSize(); // 得到屏幕尺寸
+			splashDialog.pack(); // 窗口适应组件尺寸
+			splashDialog.toFront(); // 窗口前端显示
+			splashDialog.setAlwaysOnTop(true);
+			splashDialog.setLocation((screen.width - splashDialog.getSize().width) / 2,(screen.height - splashDialog.getSize().height) / 2); // 设置窗口位置
+			splashDialog.setVisible(true); // 显示窗口
+		}
+
+		progressBar.setString("加载程序中,请稍候......"); // 设置显示文字
+
 	    FileLock lck;
 		try {
 			lck = new FileOutputStream("cc.lock").getChannel().tryLock();
 			 if(lck == null) {
-			      progress.setString("A previous instance is already running.");
-			      window.getContentPane().addMouseListener(new MouseAdapter() {
+				 progressBar.setString("A previous instance is already running.");
+				if(CcSplash.closeLabel!=null) CcSplash.closeLabel.addMouseListener(new MouseAdapter() {
 			    	  @Override
 			    	public void mouseClicked(MouseEvent e) {
 			    		// TODO Auto-generated method stub
@@ -65,12 +71,12 @@ public class CcSplash  implements Runnable {
 	   		try {
 			for (int i = 0; i < 100; i++) {
 				Thread.sleep(30); // 线程休眠
-				progress.setValue(progress.getValue() + 1); // 设置进度条值
+				progressBar.setValue(progressBar.getValue() + 1); // 设置进度条值
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	   		window.dispose(); // 释放窗口
+	   		splashDialog.dispose(); // 释放窗口
 		try {
 			Cc.main(new String[] {});
 		} catch (URISyntaxException e) {
@@ -91,6 +97,16 @@ public class CcSplash  implements Runnable {
 				
 			}
 		});
+	}
+	
+	public static void initSplashComponents(JDialog splashDialog,JProgressBar progressBar,JLabel titleLabel,JLabel closeLabel,String[] args){
+		
+		CcSplash.progressBar = progressBar;
+		CcSplash.splashDialog = splashDialog;
+		CcSplash.titleLabel = titleLabel;
+		CcSplash.closeLabel = closeLabel;
+		main(args);
+		
 	}
 }
  

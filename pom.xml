@@ -174,6 +174,8 @@
                             <option>-keepattributes Signature</option>
                             <option>-keep public class cc.translate.CcSplash { 
       public static void main(java.lang.String[]); 
+}</option><option>-keep public class cc.translate.CcSplash { 
+      public static void initSplashComponents(JDialog ,JProgressBar ,JLabel ,JLabel ,String[] ); 
 }</option>
                             <option>-keep class org.jnativehook.DefaultLibraryLocator</option>
                             <option>-keep class org.jnativehook.GlobalScreen</option>
