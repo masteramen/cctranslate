@@ -4,21 +4,27 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.nio.channels.FileLock;
  
-public class CcSplash  implements Runnable {
+public class CcSplash  implements Runnable , PropertyChangeListener {
 	private static JProgressBar progressBar;
 	private static JDialog splashDialog;
 	private static JLabel titleLabel;
 	private static JLabel closeLabel;
 	Thread splashThread; // 进度条更新线程
-
+	private static PropertyChangeSupport support;
 	public CcSplash() {
-
+		support = new PropertyChangeSupport(this);
+		if(splashDialog instanceof PropertyChangeListener){
+			support.addPropertyChangeListener((PropertyChangeListener) splashDialog);
+		}
 	}
  
 	public void start() {
@@ -28,6 +34,7 @@ public class CcSplash  implements Runnable {
  
 	public void run() {
 		URL url = getClass().getResource("/ccsplash.jpg"); // 图片的位置
+		support.firePropertyChange("backgroundImage", null, url);
 		if(CcSplash.splashDialog==null)  {
 			CcSplash.splashDialog = new JDialog();
 			CcSplash.progressBar = new JProgressBar(1, 100);
@@ -89,24 +96,41 @@ public class CcSplash  implements Runnable {
 	 
 	public static void main(String[] args) {
 		System.setProperty("apple.awt.UIElement", "true");
+		CcSplash splash = new CcSplash();
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
-				CcSplash splash = new CcSplash();
+				
 				splash.start(); // 运行启动界面
 				
 			}
 		});
 	}
 	
-	public static void initSplashComponents(JDialog splashDialog,JProgressBar progressBar,JLabel titleLabel,JLabel closeLabel,String[] args){
+	public static CcSplash initSplashComponents(JDialog splashDialog,JProgressBar progressBar,JLabel titleLabel,JLabel closeLabel,String[] args){
 		
 		CcSplash.progressBar = progressBar;
 		CcSplash.splashDialog = splashDialog;
 		CcSplash.titleLabel = titleLabel;
 		CcSplash.closeLabel = closeLabel;
-		main(args);
+		CcSplash splash = new CcSplash();
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				splash.start(); // 运行启动界面
+				
+			}
+		});
+		return splash;
+		
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		// TODO Auto-generated method stub
 		
 	}
 }

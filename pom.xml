@@ -175,7 +175,7 @@
                             <option>-keep public class cc.translate.CcSplash { 
       public static void main(java.lang.String[]); 
 }</option><option>-keep public class cc.translate.CcSplash { 
-      public static void initSplashComponents(javax.swing.JDialog,javax.swing.JProgressBar,javax.swing.JLabel,javax.swing.JLabel,java.lang.String[]); 
+      public static ** initSplashComponents(javax.swing.JDialog,javax.swing.JProgressBar,javax.swing.JLabel,javax.swing.JLabel,java.lang.String[]); 
 }</option>
                             <option>-keep class org.jnativehook.DefaultLibraryLocator</option>
                             <option>-keep class org.jnativehook.GlobalScreen</option>
